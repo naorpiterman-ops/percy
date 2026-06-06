@@ -48,7 +48,7 @@ async function sendExpiryEmail(toEmail, v) {
 }
 
 function sendBrowserNotification(v) {
-  if ("Notification" in window && Notification.permission==="granted") new Notification("⏰ Voucher Expiring Soon!",{body:`${v.store} (${v.currency}${v.remaining}) expires ${formatDate(v.expiredBy)} — ${daysLeft(v.expiredBy)}d left.`,tag:`v-${v.id}`});
+  if ("Notification" in window && Notification.permission==="granted") new Notification("Voucher Expiring Soon!",{body:`${v.store} (${v.currency}${v.remaining}) expires ${formatDate(v.expiredBy)} — ${daysLeft(v.expiredBy)}d left.`,tag:`v-${v.id}`});
 }
 
 export default function Percy({ session }) {
@@ -272,7 +272,7 @@ export default function Percy({ session }) {
         {scanImage&&<img src={scanImage} alt="" style={{width:"100%",maxHeight:150,objectFit:"cover",display:"block"}}/>}
         <div style={{padding:"14px 18px"}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-            <span style={{fontSize:16}}>✅</span>
+            <span style={{fontSize:16}}>✓</span>
             <span style={{fontSize:14,fontWeight:700,color:colors.success}}>סריקה הושלמה!</span>
             <span style={{fontSize:12,color:colors.textSecondary,marginLeft:2}}>{scanFields.length} שדות מולאו</span>
           </div>
@@ -292,7 +292,7 @@ export default function Percy({ session }) {
       <div style={{margin:"16px 24px 20px"}}>
         {inAppAlerts.map(({id,voucher:v})=>(
           <div key={id} style={{borderRadius:16,padding:"16px",background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.25)",marginBottom:12,display:"flex",alignItems:"center",gap:14}}>
-            <div style={{fontSize:20,flexShrink:0}}>⏰</div>
+            <div style={{fontSize:20,flexShrink:0}}>!</div>
             <div style={{flex:1}}>
               <div style={{fontSize:13,fontWeight:700,color:colors.warning,marginBottom:3}}>{v.store} פוגים בעוד {daysLeft(v.expiredBy)} ימים</div>
               <div style={{fontSize:11,color:colors.textSecondary}}>{v.currency}{v.remaining} · {formatDate(v.expiredBy)}</div>
@@ -321,7 +321,7 @@ export default function Percy({ session }) {
         {/* Card */}
         <div style={{borderRadius:20,overflow:"hidden",background:v.status==="used"?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.06)",border:`1px solid ${v.status==="used"?"rgba(255,255,255,0.05)":"rgba(255,255,255,0.1)"}`,opacity:v.status==="used"?0.55:1,position:"relative",transform:isOpen?"translateX(-108px)":"translateX(0)",transition:"transform 0.25s cubic-bezier(0.4,0,0.2,1)"}}>
           {/* Expiry badge */}
-          {soon30&&!expired&&<div style={{position:"absolute",top:10,left:10,fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:50,background:"rgba(251,146,60,0.15)",color:colors.warning,border:"1px solid rgba(251,146,60,0.3)",zIndex:2}}>⏰ {days}d</div>}
+          {soon30&&!expired&&<div style={{position:"absolute",top:10,left:10,fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:50,background:"rgba(251,146,60,0.15)",color:colors.warning,border:"1px solid rgba(251,146,60,0.3)",zIndex:2}}>{days}d</div>}
 
           {/* Swipe handle */}
           {v.status!=="used"&&<button onClick={e=>{e.stopPropagation(); setSwipedId(isOpen?null:v.id);}} style={{position:"absolute",top:10,right:10,zIndex:3,width:28,height:28,borderRadius:8,background:"rgba(255,255,255,0.1)",border:`1px solid ${colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:12,color:colors.textMuted}} title="Mark as used">✓</button>}
@@ -428,7 +428,7 @@ export default function Percy({ session }) {
             )}
 
             <div style={{padding:"20px 24px"}}>
-              {[["קטגוריה",v.category||"—"],["מיקום",v.location||"—"],["פוגים",expired?`⚠ פג תוקף (${formatDate(v.expiredBy)})`:days<=30?`⏰ ${days} ימים נותרים (${formatDate(v.expiredBy)})`:formatDate(v.expiredBy)],["ערך מקורי",`${v.currency}${v.amount}`],...(v.notes?[["הערות",v.notes]]:[])].map(([label,val])=>(
+              {[["קטגוריה",v.category||"—"],["מיקום",v.location||"—"],["פוגים",expired?`פג תוקף (${formatDate(v.expiredBy)})`:days<=30?`${days} ימים נותרים (${formatDate(v.expiredBy)})`:formatDate(v.expiredBy)],["ערך מקורי",`${v.currency}${v.amount}`],...(v.notes?[["הערות",v.notes]]:[])].map(([label,val])=>(
                 <div key={label} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:`1px solid rgba(255,255,255,0.05)`}}>
                   <span style={{fontSize:13,color:colors.textMuted,fontWeight:500}}>{label}</span>
                   <span style={{fontSize:14,color:label==="Expires"&&expired?colors.danger:label==="Expires"&&days<=30?colors.warning:colors.textPrimary,fontWeight:600,textAlign:"right",maxWidth:"60%"}}>{val}</span>
@@ -483,7 +483,7 @@ export default function Percy({ session }) {
             {/* Upload and AI Scan side by side */}
             <div style={{margin:"0 24px 10px",display:"flex",gap:10,alignItems:"stretch"}}>
               <button onClick={()=>photoFileRef.current?.click()} style={{minWidth:50,borderRadius:12,border:`1.5px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:24,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,padding:"0 12px"}}>
-                📁
+                ▲
               </button>
               <div style={{flex:1}}>
                 {renderScanBanner()}
@@ -590,7 +590,7 @@ export default function Percy({ session }) {
       <div>
         <div style={{padding:"0 24px 16px",fontSize:18,fontWeight:700}}>סקירה כללית</div>
         <div style={S.statGrid}>
-          {[["🎫",vouchers.length,"סה״כ"],["✅",activeCount,"פעיל"],["⚡",halfCount,"חלקי"],["🚫",usedCount,"נוצל"],["💰",`${vouchers[0]?.currency||"₪"}${remaining.toFixed(0)}`,"זמין"],["⚠️",expiredCount,"פג תוקף"]].map(([icon,num,lbl])=>(
+          {[["◆",vouchers.length,"סה״כ"],["◆",activeCount,"פעיל"],["◆",halfCount,"חלקי"],["◆",usedCount,"נוצל"],["◆",`${vouchers[0]?.currency||"₪"}${remaining.toFixed(0)}`,"זמין"],["◆",expiredCount,"פג תוקף"]].map(([icon,num,lbl])=>(
             <div key={lbl} style={S.statBox}><div style={{fontSize:22,marginBottom:8}}>{icon}</div><div style={{fontSize:24,fontWeight:800,marginBottom:2}}>{num}</div><div style={{fontSize:11,color:colors.textMuted,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em"}}>{lbl}</div></div>
           ))}
         </div>
@@ -670,7 +670,7 @@ export default function Percy({ session }) {
         </div>
         {renderInAppAlerts()}
         <div style={{display:"flex",gap:6,padding:"0 24px",marginBottom:20}}>
-          {[["wallet","🗂 הכל"],["favorites","★ שמורים"],["stats","📊 סטטיסטיקה"]].map(([t,l])=><button key={t} style={S.tab(activeTab===t)} onClick={()=>setActiveTab(t)}>{l}</button>)}
+          {[["wallet","הכל"],["favorites","שמורים"],["stats","סטטיסטיקה"]].map(([t,l])=><button key={t} style={S.tab(activeTab===t)} onClick={()=>setActiveTab(t)}>{l}</button>)}
         </div>
         {activeTab==="stats"?renderStats():(
           loading?(
@@ -681,7 +681,7 @@ export default function Percy({ session }) {
           ):(
             <>
               <div style={{margin:"0 24px 16px",background:"rgba(255,255,255,0.06)",borderRadius:14,display:"flex",alignItems:"center",padding:"0 14px",gap:10,border:`1px solid ${colors.border}`}}>
-                <span style={{color:colors.textMuted}}>🔍</span>
+                <span style={{color:colors.textMuted}}>◉</span>
                 <input style={{flex:1,background:"transparent",border:"none",outline:"none",fontSize:15,color:colors.textPrimary,padding:"12px 0"}} placeholder="חפש חנות, קוד..." value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}/>
                 {searchQuery&&<span style={{cursor:"pointer",color:colors.textMuted}} onClick={()=>setSearchQuery("")}>✕</span>}
               </div>
@@ -693,14 +693,14 @@ export default function Percy({ session }) {
                   <button key={k} style={{...S.filterChip(filterStatus===k),color:k!=="all"&&filterStatus===k?statusConfig[k]?.color:undefined}} onClick={()=>setFilterStatus(k)}>{l}</button>
                 ))}
                 <div style={{marginLeft:"auto",display:"flex",gap:6,flexShrink:0}}>
-                  {[["expiry","⏱ תפוגה"],["amount","💰 סכום"],["store","🔤 שם"]].map(([k,icon])=>(
+                  {[["expiry","תפוגה"],["amount","סכום"],["store","שם"]].map(([k,icon])=>(
                     <button key={k} style={{padding:"6px 10px",borderRadius:50,fontSize:12,background:sortBy===k?colors.primaryGlow:"transparent",border:`1px solid ${colors.border}`,cursor:"pointer",color:sortBy===k?colors.primary:colors.textMuted}} onClick={()=>setSortBy(k)}>{icon}</button>
                   ))}
                 </div>
               </div>
               {filtered.length===0?(
                 <div style={{textAlign:"center",padding:"60px 40px",color:colors.textMuted}}>
-                  <div style={{fontSize:48,marginBottom:12}}>🎫</div>
+                  <div style={{fontSize:48,marginBottom:12}}>◆</div>
                   <div style={{fontSize:16,fontWeight:600,marginBottom:6,color:colors.textSecondary}}>אין שוברים עדיין</div>
                   <div style={{fontSize:13}}>לחץ + להוספת השובר הראשון</div>
                 </div>
@@ -739,7 +739,7 @@ export default function Percy({ session }) {
         {view==="detail" && renderDetail()}
         {view==="add"    && renderAddEdit()}
         {showCopied    && <div style={S.toast}><span>✓</span> Code copied!</div>}
-        {notifToast    && <div style={{...S.toast,top:110,background:"rgba(251,146,60,0.15)",border:"1px solid rgba(251,146,60,0.3)",color:colors.warning,borderRadius:16,padding:"14px 18px",flexDirection:"column",alignItems:"flex-start",gap:4,maxWidth:340}}><div style={{fontWeight:700,fontSize:13}}>⏰ Reminder Sent!</div><div style={{fontSize:12,color:"#D97706"}}>{notifToast.store} — {daysLeft(notifToast.expiredBy)} days left</div></div>}
+        {notifToast    && <div style={{...S.toast,top:110,background:"rgba(251,146,60,0.15)",border:"1px solid rgba(251,146,60,0.3)",color:colors.warning,borderRadius:16,padding:"14px 18px",flexDirection:"column",alignItems:"flex-start",gap:4,maxWidth:340}}><div style={{fontWeight:700,fontSize:13}}>Reminder Sent!</div><div style={{fontSize:12,color:"#D97706"}}>{notifToast.store} — {daysLeft(notifToast.expiredBy)} days left</div></div>}
         {lightboxPhoto && renderLightbox()}
       </div>
     </>
