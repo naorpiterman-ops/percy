@@ -49,7 +49,7 @@ async function sendExpiryEmail(toEmail, v) {
 }
 
 function sendBrowserNotification(v) {
-  if (Notification.permission==="granted") new Notification("⏰ Voucher Expiring Soon!",{body:`${v.store} (${v.currency}${v.remaining}) expires ${formatDate(v.expiredBy)} — ${daysLeft(v.expiredBy)}d left.`,tag:`v-${v.id}`});
+  if ("Notification" in window && Notification.permission==="granted") new Notification("⏰ Voucher Expiring Soon!",{body:`${v.store} (${v.currency}${v.remaining}) expires ${formatDate(v.expiredBy)} — ${daysLeft(v.expiredBy)}d left.`,tag:`v-${v.id}`});
 }
 
 export default function Percy({ session }) {
@@ -74,7 +74,7 @@ export default function Percy({ session }) {
   const [scanError,         setScanError]         = useState("");
   const [scanFields,        setScanFields]        = useState([]);
   const [notifEmail,        setNotifEmail]        = useState("");
-  const [browserPermission, setBrowserPermission] = useState(Notification.permission);
+  const [browserPermission, setBrowserPermission] = useState("Notification" in window ? Notification.permission : "denied");
   const [inAppAlerts,       setInAppAlerts]       = useState([]);
   const [notifSent,         setNotifSent]         = useState({});
   const [showNotifSetup,    setShowNotifSetup]    = useState(false);
@@ -114,7 +114,11 @@ export default function Percy({ session }) {
 
   const requestBrowserPermission = useCallback(async()=>{
     if (!("Notification" in window)) return;
-    setBrowserPermission(await Notification.requestPermission());
+    try {
+      setBrowserPermission(await Notification.requestPermission());
+    } catch (e) {
+      setBrowserPermission("denied");
+    }
   },[]);
 
   const sendAllNotifications = useCallback(async(voucher)=>{
