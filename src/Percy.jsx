@@ -85,7 +85,6 @@ export default function Percy({ session }) {
   const [saving,            setSaving]            = useState(false);
 
   const fileInputRef     = useRef(null);
-  const photoCameraRef   = useRef(null);
   const photoFileRef     = useRef(null);
   const selectedVoucher = vouchers.find(v=>v.id===selectedId);
 
@@ -249,8 +248,8 @@ export default function Percy({ session }) {
   // ── SCAN BANNER ─────────────────────────────────────────────
   const renderScanBanner = () => {
     if (scanState==="idle") return (
-      <div style={{margin:"0 24px 4px"}}>
-        <div onClick={()=>fileInputRef.current?.click()} style={{border:`1.5px dashed ${colors.primaryBorder}`,borderRadius:20,padding:"18px 20px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",background:colors.primaryGlow}}>
+      <div>
+        <div onClick={()=>fileInputRef.current?.click()} style={{border:`1.5px dashed ${colors.primaryBorder}`,borderRadius:20,padding:"18px 20px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",background:colors.primaryGlow,height:"100%"}}>
           <div style={{width:46,height:46,borderRadius:14,background:"rgba(16,185,129,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>📷</div>
           <div>
             <div style={{fontSize:14,fontWeight:700,color:colors.primary,marginBottom:3}}>סרוק שובר עם AI</div>
@@ -261,7 +260,7 @@ export default function Percy({ session }) {
       </div>
     );
     if (scanState==="scanning") return (
-      <div style={{margin:"0 24px 4px",borderRadius:20,overflow:"hidden",background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`}}>
+      <div style={{borderRadius:20,overflow:"hidden",background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`}}>
         {scanImage&&<img src={scanImage} alt="" style={{width:"100%",maxHeight:160,objectFit:"cover",opacity:0.4,display:"block"}}/>}
         <div style={{padding:"16px 20px",display:"flex",alignItems:"center",gap:14}}>
           <div style={{width:28,height:28,borderRadius:"50%",border:`3px solid ${colors.primary}`,borderTopColor:"transparent",animation:"spin 0.8s linear infinite",flexShrink:0}}/>
@@ -270,7 +269,7 @@ export default function Percy({ session }) {
       </div>
     );
     if (scanState==="error") return (
-      <div style={{margin:"0 24px 4px",borderRadius:20,padding:"16px 20px",background:colors.dangerBg,border:`1px solid rgba(239,68,68,0.2)`,display:"flex",gap:12}}>
+      <div style={{borderRadius:20,padding:"16px 20px",background:colors.dangerBg,border:`1px solid rgba(239,68,68,0.2)`,display:"flex",gap:12}}>
         <div style={{fontSize:20}}>⚠️</div>
         <div style={{flex:1}}>
           <div style={{fontSize:13,fontWeight:600,color:colors.danger,marginBottom:4}}>Scan failed</div>
@@ -280,7 +279,7 @@ export default function Percy({ session }) {
       </div>
     );
     if (scanState==="preview") return (
-      <div style={{margin:"0 24px 4px",borderRadius:20,overflow:"hidden",background:"rgba(74,222,128,0.05)",border:"1px solid rgba(74,222,128,0.2)"}}>
+      <div style={{borderRadius:20,overflow:"hidden",background:"rgba(74,222,128,0.05)",border:"1px solid rgba(74,222,128,0.2)"}}>
         {scanImage&&<img src={scanImage} alt="" style={{width:"100%",maxHeight:150,objectFit:"cover",display:"block"}}/>}
         <div style={{padding:"14px 18px"}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
@@ -491,17 +490,15 @@ export default function Percy({ session }) {
         {!editingId&&(
           <>
             <div style={{padding:"0 24px 10px",fontSize:11,fontWeight:600,color:colors.textMuted,letterSpacing:"0.05em",textTransform:"uppercase"}}>מילוי AI אוטומטי</div>
-            {renderScanBanner()}
 
-            {/* Photo upload section */}
+            {/* Upload and AI Scan side by side */}
             <div style={{margin:"0 24px 10px",display:"flex",gap:10}}>
-              <button onClick={()=>photoCameraRef.current?.click()} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:13,fontWeight:600}}>
-                📷<span style={{fontSize:11}}>צילום</span>
+              <button onClick={()=>photoFileRef.current?.click()} style={{width:80,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:12,fontWeight:600,flexShrink:0}}>
+                📁<span style={{fontSize:10}}>העלאת שובר</span>
               </button>
-              <button onClick={()=>photoFileRef.current?.click()} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:13,fontWeight:600}}>
-                📁<span style={{fontSize:11}}>העלאת שובר</span>
-              </button>
-              <input ref={photoCameraRef} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={handlePhotoUpload}/>
+              <div style={{flex:1}}>
+                {renderScanBanner()}
+              </div>
               <input ref={photoFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoUpload}/>
             </div>
 
