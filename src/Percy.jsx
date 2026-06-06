@@ -202,7 +202,7 @@ export default function Percy({ session }) {
   const S = {
     root:        { fontFamily:"'DM Sans',sans-serif", background:colors.bg, height:"100%", width:"100%", maxWidth:isDesktop?1280:isTablet?768:"100%", margin:"0 auto", position:"relative", overflow:"hidden", color:colors.textPrimary, transition:"background 0.3s, color 0.3s" },
     phone:       { height:"100%", width:"100%", display:"flex", flexDirection:"column", position:"relative", background:colors.bg },
-    statusBar:   { height:44, padding:"0 24px", display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:12, fontWeight:600, color:colors.textPrimary, flexShrink:0, backgroundColor:colors.surface },
+    statusBar:   { height:44, padding:"max(8px, env(safe-area-inset-top)) 24px 0", display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:12, fontWeight:600, color:colors.textPrimary, flexShrink:0, backgroundColor:colors.surface },
     scrollArea:  { flex:1, overflowY:"auto", paddingBottom:110, WebkitOverflowScrolling:"touch" },
     summaryCard: { flex:1, background:colors.fill1, borderRadius:16, padding:"14px 16px", border:`1px solid ${colors.border}` },
     tab:    (a)=>({ padding:"8px 16px", borderRadius:50, fontSize:13, fontWeight:a?600:500, background:a?colors.primary:"transparent", color:a?colors.bg:colors.textMuted, border:a?`1px solid ${colors.primaryBorder}`:0, cursor:"pointer", whiteSpace:"nowrap" }),
@@ -291,17 +291,17 @@ export default function Percy({ session }) {
   const renderInAppAlerts = () => {
     if (inAppAlerts.length===0) return null;
     return (
-      <div style={{margin:"0 24px 16px"}}>
+      <div style={{margin:"0 24px 16px",position:"relative",zIndex:10}}>
         {inAppAlerts.map(({id,voucher:v})=>(
-          <div key={id} style={{borderRadius:16,padding:"14px 16px",background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.25)",marginBottom:8,display:"flex",alignItems:"center",gap:12}}>
+          <div key={id} style={{borderRadius:16,padding:"14px 16px",background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.25)",marginBottom:8,display:"flex",alignItems:"center",gap:12,position:"relative",zIndex:10}}>
             <div style={{fontSize:20,flexShrink:0}}>⏰</div>
             <div style={{flex:1}}>
               <div style={{fontSize:13,fontWeight:700,color:colors.warning,marginBottom:2}}>{v.store} פוגים בעוד {daysLeft(v.expiredBy)} ימים</div>
               <div style={{fontSize:11,color:colors.textSecondary}}>{v.currency}{v.remaining} · {formatDate(v.expiredBy)}</div>
             </div>
-            <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"flex-end"}}>
-              <button onClick={()=>sendAllNotifications(v)} style={{fontSize:11,fontWeight:600,padding:"5px 12px",borderRadius:8,background:"rgba(251,146,60,0.2)",border:"1px solid rgba(251,146,60,0.4)",color:colors.warning,cursor:"pointer",whiteSpace:"nowrap"}}>{notifSent[v.id]?"✓ נשלח":"הודע לי"}</button>
-              <button onClick={()=>setInAppAlerts(a=>a.filter(x=>x.id!==id))} style={{fontSize:10,color:colors.textMuted,background:"none",border:"none",cursor:"pointer"}}>סגור</button>
+            <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"flex-end",position:"relative",zIndex:11,pointerEvents:"auto"}}>
+              <button onClick={()=>sendAllNotifications(v)} style={{fontSize:11,fontWeight:600,padding:"5px 12px",borderRadius:8,background:"rgba(251,146,60,0.2)",border:"1px solid rgba(251,146,60,0.4)",color:colors.warning,cursor:"pointer",whiteSpace:"nowrap",position:"relative",zIndex:11,pointerEvents:"auto"}}>{notifSent[v.id]?"✓ נשלח":"הודע לי"}</button>
+              <button onClick={()=>setInAppAlerts(a=>a.filter(x=>x.id!==id))} style={{fontSize:10,color:colors.textMuted,background:"none",border:"none",cursor:"pointer",position:"relative",zIndex:11,pointerEvents:"auto"}}>סגור</button>
             </div>
           </div>
         ))}
