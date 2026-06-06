@@ -295,7 +295,7 @@ export default function Percy({ session }) {
         {scanImage&&<img src={scanImage} alt="" style={{width:"100%",maxHeight:150,objectFit:"cover",display:"block"}}/>}
         <div style={{padding:"14px 18px"}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-            <Icon name="check-circle" size={18} color={colors.success} />
+            <span style={{fontSize:16}}>✅</span>
             <span style={{fontSize:14,fontWeight:700,color:colors.success}}>סריקה הושלמה!</span>
             <span style={{fontSize:12,color:colors.textSecondary,marginLeft:2}}>{scanFields.length} שדות מולאו</span>
           </div>
@@ -315,7 +315,7 @@ export default function Percy({ session }) {
       <div style={{margin:"16px 24px 20px"}}>
         {inAppAlerts.map(({id,voucher:v})=>(
           <div key={id} style={{borderRadius:16,padding:"16px",background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.25)",marginBottom:12,display:"flex",alignItems:"center",gap:14}}>
-            <Icon name="alert-circle" size={20} color={colors.warning} />
+            <span style={{fontSize:20}}>⏰</span>
             <div style={{flex:1}}>
               <div style={{fontSize:13,fontWeight:700,color:colors.warning,marginBottom:3}}>{v.store} פוגים בעוד {daysLeft(v.expiredBy)} ימים</div>
               <div style={{fontSize:11,color:colors.textSecondary}}>{v.currency}{v.remaining} · {formatDate(v.expiredBy)}</div>
@@ -505,8 +505,8 @@ export default function Percy({ session }) {
 
             {/* Upload and AI Scan side by side */}
             <div style={{margin:"0 24px 10px",display:"flex",gap:10,alignItems:"stretch"}}>
-              <button onClick={()=>photoFileRef.current?.click()} style={{minWidth:50,borderRadius:12,border:`1.5px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,padding:"0 12px"}}>
-                <Icon name="upload" size={20} color={colors.primary} />
+              <button onClick={()=>photoFileRef.current?.click()} style={{minWidth:50,borderRadius:12,border:`1.5px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,padding:"0 12px",fontSize:20}}>
+                📁
               </button>
               <div style={{flex:1}}>
                 {renderScanBanner()}
@@ -614,7 +614,7 @@ export default function Percy({ session }) {
         <div style={{padding:"0 24px 16px",fontSize:18,fontWeight:700}}>סקירה כללית</div>
         <div style={S.statGrid}>
           {[["wallet",vouchers.length,"סה״כ"],["check-circle",activeCount,"פעיל"],["zap",halfCount,"חלקי"],["trash-2",usedCount,"נוצל"],["trending-up",`${vouchers[0]?.currency||"₪"}${remaining.toFixed(0)}`,"זמין"],["alert-circle",expiredCount,"פג תוקף"]].map(([icon,num,lbl])=>(
-            <div key={lbl} style={S.statBox}><div style={{marginBottom:8}}><Icon name={icon} size={24} color={colors.textPrimary} /></div><div style={{fontSize:24,fontWeight:800,marginBottom:2}}>{num}</div><div style={{fontSize:11,color:colors.textMuted,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em"}}>{lbl}</div></div>
+            <div key={lbl} style={S.statBox}><div style={{fontSize:24,fontWeight:800,marginBottom:2}}>{num}</div><div style={{fontSize:11,color:colors.textMuted,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em"}}>{lbl}</div></div>
           ))}
         </div>
         {catBreakdown.length>0&&savedTotal>0&&(
@@ -674,11 +674,11 @@ export default function Percy({ session }) {
       <div style={S.statusBar}>
         <PercyLogo variant="icon" size="xs" />
         <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>setShowNotifSetup(true)} style={{position:"relative",width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <Icon name="bell" size={20} color={colors.textPrimary} />{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
+          <button onClick={()=>setShowNotifSetup(true)} style={{position:"relative",width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:18}}>
+            🔔{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
           </button>
-          <button onClick={()=>setShowNotifSetup(true)} style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <Icon name="settings" size={20} color={colors.textPrimary} />
+          <button onClick={()=>setShowNotifSetup(true)} style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:18}}>
+            ⚙️
           </button>
         </div>
       </div>
@@ -693,7 +693,7 @@ export default function Percy({ session }) {
         </div>
         {renderInAppAlerts()}
         <div style={{display:"flex",gap:6,padding:"0 24px",marginBottom:20}}>
-          {[["wallet","הכל"],["favorites","שמורים"],["stats","סטטיסטיקה"]].map(([t,l])=><button key={t} style={{...S.tab(activeTab===t),display:"flex",alignItems:"center",gap:6}} onClick={()=>setActiveTab(t)}><Icon name={t==="wallet"?"wallet":t==="favorites"?"star":"bar-chart-2"} size={16} color="inherit" />{l}</button>)}
+          {[["wallet","הכל"],["favorites","שמורים"],["stats","סטטיסטיקה"]].map(([t,l])=><button key={t} style={S.tab(activeTab===t)} onClick={()=>setActiveTab(t)}>{l}</button>)}
         </div>
         {activeTab==="stats"?renderStats():(
           loading?(
@@ -704,26 +704,23 @@ export default function Percy({ session }) {
           ):(
             <>
               <div style={{margin:"0 24px 16px",background:"rgba(255,255,255,0.06)",borderRadius:14,display:"flex",alignItems:"center",padding:"0 14px",gap:10,border:`1px solid ${colors.border}`}}>
-                <Icon name="search" size={18} color={colors.textMuted} />
+                <span style={{color:colors.textMuted}}>🔍</span>
                 <input style={{flex:1,background:"transparent",border:"none",outline:"none",fontSize:15,color:colors.textPrimary,padding:"12px 0"}} placeholder="חפש חנות, קוד..." value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}/>
                 {searchQuery&&<span style={{cursor:"pointer",color:colors.textMuted}} onClick={()=>setSearchQuery("")}>✕</span>}
-              </div>
-              <div style={{display:"flex",gap:8,padding:"0 24px",overflowX:"auto",marginBottom:10,scrollbarWidth:"none"}}>
-                {CATEGORIES.map(c=><button key={c} style={S.filterChip(filterCategory===c)} onClick={()=>setFilterCategory(c)}>{c}</button>)}
               </div>
               <div style={{display:"flex",gap:8,padding:"0 24px",marginBottom:16,overflowX:"auto",scrollbarWidth:"none"}}>
                 {[["all","הכל"],["active","פעיל"],["partial","חלקי"],["used","נוצל"]].map(([k,l])=>(
                   <button key={k} style={{...S.filterChip(filterStatus===k),color:k!=="all"&&filterStatus===k?statusConfig[k]?.color:undefined}} onClick={()=>setFilterStatus(k)}>{l}</button>
                 ))}
                 <div style={{marginLeft:"auto",display:"flex",gap:6,flexShrink:0}}>
-                  {[["expiry","clock"],["amount","trending-up"],["store","type"]].map(([k,icon])=>(
-                    <button key={k} style={{padding:"6px 10px",borderRadius:50,background:sortBy===k?colors.primaryGlow:"transparent",border:`1px solid ${colors.border}`,cursor:"pointer",color:sortBy===k?colors.primary:colors.textMuted,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setSortBy(k)}><Icon name={icon} size={16} color="inherit" /></button>
+                  {[["expiry","תפוגה"],["amount","סכום"],["store","שם"]].map(([k,label])=>(
+                    <button key={k} style={{padding:"6px 10px",borderRadius:50,fontSize:11,background:sortBy===k?colors.primaryGlow:"transparent",border:`1px solid ${colors.border}`,cursor:"pointer",color:sortBy===k?colors.primary:colors.textMuted}} onClick={()=>setSortBy(k)}>{label}</button>
                   ))}
                 </div>
               </div>
               {filtered.length===0?(
                 <div style={{textAlign:"center",padding:"60px 40px",color:colors.textMuted}}>
-                  <div style={{marginBottom:12}}><Icon name="ticket" size={48} color={colors.textSecondary} /></div>
+                  <div style={{marginBottom:12,fontSize:48}}>🎫</div>
                   <div style={{fontSize:16,fontWeight:600,marginBottom:6,color:colors.textSecondary}}>אין שוברים עדיין</div>
                   <div style={{fontSize:13}}>לחץ + להוספת השובר הראשון</div>
                 </div>
