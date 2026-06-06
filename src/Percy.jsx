@@ -197,15 +197,6 @@ export default function Percy({ session }) {
     reader.readAsDataURL(file); e.target.value="";
   }
 
-  function handlePhotoUpload(e) {
-    const file=e.target.files?.[0]; if (!file) return;
-    const reader=new FileReader();
-    reader.onload=(ev)=>{
-      const dataUrl=ev.target.result;
-      setForm(f=>({...f, photo:dataUrl}));
-    };
-    reader.readAsDataURL(file); e.target.value="";
-  }
 
   // ── STYLES ───────────────────────────────────────────────────
   const S = {
@@ -492,14 +483,14 @@ export default function Percy({ session }) {
             <div style={{padding:"0 24px 10px",fontSize:11,fontWeight:600,color:colors.textMuted,letterSpacing:"0.05em",textTransform:"uppercase"}}>מילוי AI אוטומטי</div>
 
             {/* Upload and AI Scan side by side */}
-            <div style={{margin:"0 24px 10px",display:"flex",gap:10}}>
-              <button onClick={()=>photoFileRef.current?.click()} style={{width:80,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:12,fontWeight:600,flexShrink:0}}>
-                📁<span style={{fontSize:10}}>העלאת שובר</span>
+            <div style={{margin:"0 24px 10px",display:"flex",gap:10,alignItems:"stretch"}}>
+              <button onClick={()=>photoFileRef.current?.click()} style={{width:48,height:48,borderRadius:12,border:`1.5px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:22,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,padding:0}}>
+                📁
               </button>
               <div style={{flex:1}}>
                 {renderScanBanner()}
               </div>
-              <input ref={photoFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoUpload}/>
+              <input ref={photoFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImageUpload}/>
             </div>
 
             {/* Photo preview */}
