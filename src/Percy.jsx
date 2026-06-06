@@ -84,8 +84,9 @@ export default function Percy({ session }) {
   const [customCategory,    setCustomCategory]    = useState("");
   const [saving,            setSaving]            = useState(false);
 
-  const fileInputRef    = useRef(null);
-  const photoInputRef   = useRef(null);
+  const fileInputRef     = useRef(null);
+  const photoCameraRef   = useRef(null);
+  const photoFileRef     = useRef(null);
   const selectedVoucher = vouchers.find(v=>v.id===selectedId);
 
   useEffect(()=>{
@@ -491,34 +492,36 @@ export default function Percy({ session }) {
           <>
             <div style={{padding:"0 24px 10px",fontSize:11,fontWeight:600,color:colors.textMuted,letterSpacing:"0.05em",textTransform:"uppercase"}}>מילוי AI אוטומטי</div>
             {renderScanBanner()}
+
+            {/* Photo upload section */}
+            <div style={{margin:"0 24px 10px",display:"flex",gap:10}}>
+              <button onClick={()=>photoCameraRef.current?.click()} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:13,fontWeight:600}}>
+                📷<span style={{fontSize:11}}>צילום</span>
+              </button>
+              <button onClick={()=>photoFileRef.current?.click()} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:13,fontWeight:600}}>
+                📁<span style={{fontSize:11}}>העלאת שובר</span>
+              </button>
+              <input ref={photoCameraRef} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={handlePhotoUpload}/>
+              <input ref={photoFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handlePhotoUpload}/>
+            </div>
+
+            {/* Photo preview */}
+            {form.photo&&(
+              <div style={{margin:"0 24px 10px"}}>
+                <div style={{position:"relative",borderRadius:14,overflow:"hidden",border:`1px solid ${colors.border}`}}>
+                  <img src={form.photo} alt="" style={{width:"100%",maxHeight:160,objectFit:"contain",background:"#111",display:"block"}}/>
+                  <button onClick={()=>{setForm(f=>({...f,photo:null,photo_url:null}));setPhotoFile(null);}} style={{position:"absolute",top:8,right:8,width:28,height:28,borderRadius:8,background:"rgba(0,0,0,0.6)",border:"none",color:"#fff",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+                </div>
+              </div>
+            )}
+
             <div style={{padding:"16px 24px 10px",display:"flex",alignItems:"center",gap:12}}>
               <div style={{flex:1,height:1,background:"rgba(255,255,255,0.07)"}}/>
-              <span style={{fontSize:11,color:colors.textMuted,fontWeight:600}}>{scanState==="preview"?"בדוק וערוך":"או מלא ידנית"}</span>
+              <span style={{fontSize:11,color:colors.textMuted,fontWeight:600}}>{scanState==="preview"?"בדוק וערוך":"מלא ידנית"}</span>
               <div style={{flex:1,height:1,background:"rgba(255,255,255,0.07)"}}/>
             </div>
           </>
         )}
-
-        {/* Photo section */}
-        <div style={S.formSection}>
-          <label style={S.formLabel}>תמונת שובר</label>
-          {form.photo?(
-            <div style={{position:"relative",borderRadius:14,overflow:"hidden",border:`1px solid ${colors.border}`}}>
-              <img src={form.photo} alt="" style={{width:"100%",maxHeight:160,objectFit:"contain",background:"#111",display:"block"}}/>
-              <button onClick={()=>{setForm(f=>({...f,photo:null,photo_url:null}));setPhotoFile(null);}} style={{position:"absolute",top:8,right:8,width:28,height:28,borderRadius:8,background:"rgba(0,0,0,0.6)",border:"none",color:"#fff",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
-            </div>
-          ):(
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={()=>photoInputRef.current?.click()} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.border}`,background:"rgba(255,255,255,0.04)",cursor:"pointer",color:colors.textPrimary,transition:"all 0.2s",fontSize:13,fontWeight:600}}>
-                📷<span style={{fontSize:11,color:colors.textMuted}}>צילום</span>
-              </button>
-              <button onClick={()=>{photoInputRef.current?.setAttribute("capture","false");photoInputRef.current?.click();}} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"14px 12px",borderRadius:12,border:`1px solid ${colors.border}`,background:"rgba(255,255,255,0.04)",cursor:"pointer",color:colors.textPrimary,transition:"all 0.2s",fontSize:13,fontWeight:600}}>
-                📁<span style={{fontSize:11,color:colors.textMuted}}>הוספה</span>
-              </button>
-            </div>
-          )}
-          <input ref={photoInputRef} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={handlePhotoUpload}/>
-        </div>
 
         <div style={S.formSection}>
           <label style={S.formLabel}>שם החנות {isFilled("store")&&<span style={{color:colors.active,fontSize:10,fontWeight:700}}>✦ מולא על ידי AI</span>}</label>
