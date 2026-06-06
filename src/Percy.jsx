@@ -194,8 +194,8 @@ export default function Percy({ session }) {
 
   // ── STYLES ───────────────────────────────────────────────────
   const S = {
-    root:        { fontFamily:"'DM Sans',sans-serif", background:colors.bg, minHeight:"100vh", width:"100%", maxWidth:isDesktop?1280:isTablet?768:"100%", margin:"0 auto", position:"relative", overflow:"hidden", color:colors.textPrimary, transition:"background 0.3s, color 0.3s" },
-    phone:       { minHeight:"100vh", width:"100%", display:"flex", flexDirection:"column", position:"relative", background:colors.bg },
+    root:        { fontFamily:"'DM Sans',sans-serif", background:colors.bg, height:"100%", width:"100%", maxWidth:isDesktop?1280:isTablet?768:"100%", margin:"0 auto", position:"relative", overflow:"hidden", color:colors.textPrimary, transition:"background 0.3s, color 0.3s" },
+    phone:       { height:"100%", width:"100%", display:"flex", flexDirection:"column", position:"relative", background:colors.bg },
     statusBar:   { height:44, padding:"0 24px", display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:12, fontWeight:600, color:colors.textPrimary, flexShrink:0, backgroundColor:colors.surface },
     scrollArea:  { flex:1, overflowY:"auto", paddingBottom:110, WebkitOverflowScrolling:"touch" },
     summaryCard: { flex:1, background:colors.fill1, borderRadius:16, padding:"14px 16px", border:`1px solid ${colors.border}` },
