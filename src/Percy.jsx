@@ -652,10 +652,10 @@ export default function Percy({ session }) {
         <PercyLogo variant="icon" size="xs" />
         <div style={{display:"flex",gap:8}}>
           <button onClick={()=>setShowNotifSetup(true)} style={{position:"relative",width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            🔔{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
+            ○{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
           </button>
           <button onClick={()=>setShowNotifSetup(true)} style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            ⚙️
+            ◇
           </button>
         </div>
       </div>
