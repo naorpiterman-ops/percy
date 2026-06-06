@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#10B981" />
+    <meta name="description" content="Percy — ארנקך החכם לשוברים" />
+
+    <!-- PWA / iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Percy" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Google Fonts: Bricolage Grotesque, DM Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet" />
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <style>
+      :root {
+        --brand: #10B981;
+        --brand-deep: #059669;
+      }
+
+      [data-theme="dark"] {
+        --bg: #0A0A0F;
+        --surface: #13131A;
+        --text-primary: #F0EEF6;
+      }
+
+      [data-theme="light"] {
+        --bg: #F4F4FA;
+        --surface: #FFFFFF;
+        --text-primary: #17171F;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text-primary);
+        transition: background 0.3s, color 0.3s;
+      }
+    </style>
+
+    <title>Percy</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
