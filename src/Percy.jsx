@@ -484,7 +484,7 @@ export default function Percy({ session }) {
 
             {/* Upload and AI Scan side by side */}
             <div style={{margin:"0 24px 10px",display:"flex",gap:10,alignItems:"stretch"}}>
-              <button onClick={()=>photoFileRef.current?.click()} style={{width:48,height:48,borderRadius:12,border:`1.5px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:22,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,padding:0}}>
+              <button onClick={()=>photoFileRef.current?.click()} style={{minWidth:50,borderRadius:12,border:`1.5px solid ${colors.primaryBorder}`,background:colors.primaryGlow,cursor:"pointer",color:colors.primary,transition:"all 0.2s",fontSize:24,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,padding:"0 12px"}}>
                 📁
               </button>
               <div style={{flex:1}}>
