@@ -318,13 +318,6 @@ export default function Percy({ session }) {
 
     return (
       <div key={v.id} style={{margin:"0 24px 12px",position:"relative",borderRadius:20,overflow:"hidden"}}>
-        {/* Revealed action layer */}
-        <div style={{position:"absolute",inset:0,background:"rgba(74,222,128,0.08)",border:"1px solid rgba(74,222,128,0.2)",borderRadius:20,display:"flex",alignItems:"center",justifyContent:"flex-end",paddingRight:14}}>
-          <button onClick={()=>{ markUsed(v.id); setSwipedId(null); }} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"rgba(74,222,128,0.15)",border:"1px solid rgba(74,222,128,0.4)",borderRadius:14,padding:"10px 16px",cursor:"pointer",color:colors.active,fontSize:11,fontWeight:700}}>
-            <span style={{fontSize:20}}>✓</span>סמן כנוצל
-          </button>
-        </div>
-
         {/* Card */}
         <div style={{borderRadius:20,overflow:"hidden",background:v.status==="used"?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.06)",border:`1px solid ${v.status==="used"?"rgba(255,255,255,0.05)":"rgba(255,255,255,0.1)"}`,opacity:v.status==="used"?0.55:1,position:"relative",transform:isOpen?"translateX(-108px)":"translateX(0)",transition:"transform 0.25s cubic-bezier(0.4,0,0.2,1)"}}>
           {/* Expiry badge */}
