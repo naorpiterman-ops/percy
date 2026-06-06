@@ -3,6 +3,7 @@ import { supabase } from "./lib/supabaseClient";
 import Percy from "./Percy";
 import LoginScreen from "./components/LoginScreen";
 import SpinnerCoin from "./components/SpinnerCoin";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 export default function App() {
   const [session, setSession] = useState(undefined); // undefined = loading
@@ -38,5 +39,5 @@ export default function App() {
 
   if (session === undefined) return <SpinnerCoin />;
   if (!session)              return <LoginScreen />;
-  return <Percy session={session} />;
+  return <ErrorBoundary><Percy session={session} /></ErrorBoundary>;
 }
