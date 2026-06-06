@@ -8,7 +8,6 @@ import Badge from "./components/Badge";
 import Tab from "./components/Tab";
 import Field from "./components/Field";
 import SummaryCard from "./components/SummaryCard";
-import BottomNav from "./components/BottomNav";
 import ConfirmModal from "./components/ConfirmModal";
 import VoucherCard from "./components/VoucherCard";
 import PercyLogo from "./components/PercyLogo";
@@ -203,7 +202,7 @@ export default function Percy({ session }) {
     root:        { fontFamily:"'DM Sans',sans-serif", background:colors.bg, height:"100%", width:"100%", maxWidth:isDesktop?1280:isTablet?768:"100%", margin:"0 auto", position:"relative", overflow:"hidden", color:colors.textPrimary, transition:"background 0.3s, color 0.3s" },
     phone:       { height:"100%", width:"100%", display:"flex", flexDirection:"column", position:"relative", background:colors.bg },
     statusBar:   { minHeight:56, padding:"max(12px, env(safe-area-inset-top)) 24px 12px", display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:12, fontWeight:600, color:colors.textPrimary, flexShrink:0, backgroundColor:colors.surface },
-    scrollArea:  { flex:1, overflowY:"auto", paddingBottom:130, WebkitOverflowScrolling:"touch" },
+    scrollArea:  { flex:1, overflowY:"auto", paddingBottom:24, WebkitOverflowScrolling:"touch" },
     summaryCard: { flex:1, background:colors.fill1, borderRadius:16, padding:"14px 16px", border:`1px solid ${colors.border}` },
     tab:    (a)=>({ padding:"8px 16px", borderRadius:50, fontSize:13, fontWeight:a?600:500, background:a?colors.primary:"transparent", color:a?colors.bg:colors.textMuted, border:a?`1px solid ${colors.primaryBorder}`:0, cursor:"pointer", whiteSpace:"nowrap" }),
     filterChip:(a)=>({ padding:"6px 14px", borderRadius:50, fontSize:12, fontWeight:a?600:400, background:a?colors.primaryGlow:"transparent", color:a?colors.primary:colors.textMuted, border:a?`1px solid ${colors.primaryBorder}`:`1px solid ${colors.border}`, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }),
@@ -223,8 +222,7 @@ export default function Percy({ session }) {
     sheet:       { background:colors.surfaceRaised, borderRadius:"24px 24px 0 0", padding:"28px 24px 48px", width:"100%", maxWidth:390 },
     statGrid:    { display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, padding:"0 24px", marginBottom:20 },
     statBox:     { background:colors.fill1, borderRadius:18, padding:"18px 16px", border:`1px solid ${colors.border}` },
-    fab:         { position:"fixed", bottom:80, left:"50%", transform:"translateX(-50%)", width:56, height:56, borderRadius:16, background:gradients.primary, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", boxShadow:`0 8px 24px ${colors.shadowGlow}`, zIndex:101, border:"none", color:"#fff", fontSize:28, fontWeight:700 },
-    bottomNav:   { position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, background:colors.surface, backdropFilter:"blur(20px)", borderTop:`1px solid ${colors.border}`, display:"flex", justifyContent:"space-around", padding:`12px 0 max(12px, env(safe-area-inset-bottom))`, zIndex:100 },
+    fab:         { position:"fixed", bottom:32, right:24, width:60, height:60, borderRadius:16, background:colors.primary, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", boxShadow:`0 8px 24px ${colors.shadowGlow}`, zIndex:99, border:"none", color:"#fff", fontSize:32, fontWeight:700 },
     navItem: (a)=>({ display:"flex", flexDirection:"column", alignItems:"center", gap:4, cursor:"pointer", color:a?colors.primary:colors.textMuted }),
     navLabel:    { fontSize:10, fontWeight:600, letterSpacing:"0.03em" },
     shadowCard:  colors.shadowCard,
@@ -652,9 +650,14 @@ export default function Percy({ session }) {
     <div style={S.phone}>
       <div style={S.statusBar}>
         <PercyLogo variant="icon" size="xs" />
-        <button onClick={()=>setShowNotifSetup(true)} style={{position:"relative",width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-          🔔{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
-        </button>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={()=>setShowNotifSetup(true)} style={{position:"relative",width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            🔔{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
+          </button>
+          <button onClick={()=>setShowNotifSetup(true)} style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            ⚙️
+          </button>
+        </div>
       </div>
       <div style={S.scrollArea} onClick={()=>swipedId&&setSwipedId(null)}>
         <div style={{padding:"16px 24px 20px"}}>
@@ -706,19 +709,7 @@ export default function Percy({ session }) {
           )
         )}
       </div>
-      <BottomNav activeTab={activeTab} onTabChange={(tab)=>{
-        if (tab === "add") {
-          setForm(EMPTY_FORM);
-          setEditingId(null);
-          setScanState("idle");
-          setScanImage(null);
-          setPhotoFile(null);
-          setView("add");
-        } else {
-          setView("home");
-        }
-        setActiveTab(tab);
-      }} />
+      <button onClick={()=>{setForm(EMPTY_FORM);setEditingId(null);setScanState("idle");setScanImage(null);setPhotoFile(null);setView("add");}} style={{position:"fixed",bottom:32,right:24,width:60,height:60,borderRadius:16,background:colors.primary,border:"none",color:"#fff",fontSize:32,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px ${colors.shadowGlow}`,zIndex:99}}>+</button>
       {showNotifSetup&&renderNotifSetup()}
     </div>
   );
