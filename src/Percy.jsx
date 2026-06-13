@@ -641,7 +641,7 @@ export default function Percy({ session }) {
   // ── NOTIF SETTINGS ───────────────────────────────────────────
   const renderNotifSetup = () => (
     <div style={S.overlay} onClick={()=>setShowNotifSetup(false)}>
-      <div style={{...S.sheet,maxHeight:"80vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+      <div style={{...S.sheet,height:"80vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
           <div><div style={{fontSize:20,fontWeight:800,marginBottom:4}}>🔔 הגדרות תזכורות</div><div style={{fontSize:13,color:colors.textMuted}}>קבל התראה 30 יום לפני התפוגה</div></div>
           <button style={{...S.backBtn,fontSize:16}} onClick={()=>setShowNotifSetup(false)}>✕</button>
@@ -723,7 +723,7 @@ export default function Percy({ session }) {
           )}
         </div>
 
-        <button style={{...S.saveBtn,width:"100%",boxSizing:"border-box",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center",marginTop:8}} onClick={()=>setShowNotifSetup(false)}>בוצע</button>
+        <button style={{width:"100%",boxSizing:"border-box",padding:"15px",borderRadius:16,border:"none",background:gradients.primary,color:colors.bg,fontSize:16,fontWeight:700,cursor:"pointer",marginTop:8,textAlign:"center"}} onClick={()=>setShowNotifSetup(false)}>בוצע</button>
       </div>
     </div>
   );
