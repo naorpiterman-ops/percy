@@ -149,6 +149,7 @@ export default function Percy({ session }) {
   const [showSettings,      setShowSettings]      = useState(false);
   const [showPartialUse,    setShowPartialUse]    = useState(false);
   const [partialAmount,     setPartialAmount]     = useState("");
+  const [duplicateVoucher,  setDuplicateVoucher]  = useState(null);
   const [notifToast,        setNotifToast]        = useState(null);
   const [newPassword,       setNewPassword]       = useState("");
   const [pwMsg,             setPwMsg]             = useState("");
@@ -271,6 +272,11 @@ export default function Percy({ session }) {
         // auto-assign color from category
         const catColor = CATEGORY_COLORS[next.category];
         next.color = catColor || extracted.color || "#10B981";
+        // check for duplicate barcode
+        if(next.barcode) {
+          const dup = vouchers.find(v => v.barcode && v.barcode === next.barcode);
+          if(dup) { setDuplicateVoucher(dup); setScanState("idle"); setScanImage(null); setPhotoFile(null); return; }
+        }
         setForm(next); setScanFields(filled); setScanState("preview");
       } catch(err) { setScanError("Couldn't read the voucher. Try a clearer photo or fill in manually."); setScanState("error"); }
     };
@@ -938,6 +944,22 @@ export default function Percy({ session }) {
         {showCopied    && <div style={S.toast}><span>✓</span> Code copied!</div>}
         {notifToast    && <div style={{...S.toast,top:110,background:"rgba(251,146,60,0.15)",border:"1px solid rgba(251,146,60,0.3)",color:colors.warning,borderRadius:16,padding:"14px 18px",flexDirection:"column",alignItems:"flex-start",gap:4,maxWidth:340}}><div style={{fontWeight:700,fontSize:13}}>Reminder Sent!</div><div style={{fontSize:12,color:"#D97706"}}>{notifToast.store} — {daysLeft(notifToast.expiredBy)} days left</div></div>}
         {lightboxPhoto && renderLightbox()}
+        {duplicateVoucher&&(
+          <div style={S.overlay} onClick={()=>setDuplicateVoucher(null)}>
+            <div style={S.sheet} onClick={e=>e.stopPropagation()}>
+              <div style={{fontSize:22,marginBottom:8}}>⚠️</div>
+              <div style={{fontSize:18,fontWeight:800,marginBottom:8}}>שובר קיים כבר!</div>
+              <div style={{fontSize:14,color:colors.textSecondary,marginBottom:20,lineHeight:1.6}}>
+                שובר של <strong style={{color:colors.textPrimary}}>{duplicateVoucher.store}</strong> עם אותו ברקוד כבר נמצא בארנק שלך.<br/>
+                <span style={{fontSize:12,color:colors.textMuted}}>קוד: {duplicateVoucher.barcode}</span>
+              </div>
+              <div style={{display:"flex",gap:10}}>
+                <button style={{flex:1,padding:"13px",borderRadius:14,border:`1px solid ${colors.border}`,background:colors.fill1,color:colors.textPrimary,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}} onClick={()=>setDuplicateVoucher(null)}>סגור</button>
+                <button style={{flex:1,padding:"13px",borderRadius:14,border:"none",background:gradients.primary,color:colors.bg,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}} onClick={()=>{setSelectedId(duplicateVoucher.id);setView("detail");setDuplicateVoucher(null);}}>צפה בשובר</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
