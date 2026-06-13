@@ -689,7 +689,7 @@ export default function Percy({ session }) {
 
               <div style={{marginBottom:14}}>
                 <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>בתאריך</label>
-                <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14,padding:"12px 14px"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
+                <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:13,padding:"12px 10px",WebkitAppearance:"none",appearance:"none",minWidth:0,overflow:"hidden",maxWidth:"100%"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
               </div>
 
               <div style={{marginBottom:16}}>
@@ -814,7 +814,8 @@ export default function Percy({ session }) {
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
         body{background:#0A0A0F;}
         ::-webkit-scrollbar{display:none;}
-        input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);}
+        input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);flex-shrink:0;}
+        input[type="date"]{overflow:hidden;text-overflow:ellipsis;}
         input,select,textarea,button{font-family:'DM Sans',sans-serif;}
         select option{background:#1A1A24;}
         @keyframes spin{to{transform:rotate(360deg);}}
