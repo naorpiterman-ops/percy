@@ -675,12 +675,12 @@ export default function Percy({ session }) {
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"18px",marginBottom:16,border:`1px solid ${colors.border}`}}>
               <div style={{marginBottom:14}}>
                 <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>שם השובר</label>
-                <input style={{...S.formInput}} placeholder="Netflix, Spotify, etc." value={reminderForm.voucherName} onChange={e=>setReminderForm(f=>({...f,voucherName:e.target.value}))}/>
+                <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14}} placeholder="Netflix, Spotify..." value={reminderForm.voucherName} onChange={e=>setReminderForm(f=>({...f,voucherName:e.target.value}))}/>
               </div>
 
               <div style={{marginBottom:14}}>
                 <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>תדירות</label>
-                <select style={{...S.formInput}} value={reminderForm.frequency} onChange={e=>setReminderForm(f=>({...f,frequency:e.target.value}))}>
+                <select style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14}} value={reminderForm.frequency} onChange={e=>setReminderForm(f=>({...f,frequency:e.target.value}))}>
                   <option value="monthly">כל חודש</option>
                   <option value="yearly">כל שנה</option>
                   <option value="weekly">כל שבוע</option>
@@ -689,7 +689,7 @@ export default function Percy({ session }) {
 
               <div style={{marginBottom:14}}>
                 <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>בתאריך</label>
-                <input style={{...S.formInput}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
+                <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14,padding:"12px 14px"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
               </div>
 
               <div style={{marginBottom:16}}>
