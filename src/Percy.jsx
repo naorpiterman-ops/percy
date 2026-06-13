@@ -680,22 +680,31 @@ export default function Percy({ session }) {
                 <option value="weekly">כל שבוע</option>
                 <option value="custom">בתאריך ספציפי</option>
               </select>
-              <input style={{...S.formInput,marginBottom:12}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
+              <div style={{marginBottom:12}}>
+                <label style={{fontSize:12,fontWeight:600,color:colors.textSecondary,marginBottom:6,display:"block"}}>בחר תאריך</label>
+                <input style={{...S.formInput,width:"100%",boxSizing:"border-box"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
+              </div>
 
-              <div style={{fontSize:12,fontWeight:600,marginBottom:8,color:colors.textSecondary}}>אפשרויות הודעה:</div>
-              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:12}}>
-                <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",color:colors.textPrimary}}>
-                  <input type="checkbox" checked={reminderForm.notifications.inApp} onChange={e=>setReminderForm(f=>({...f,notifications:{...f.notifications,inApp:e.target.checked}}))} style={{cursor:"pointer"}}/>
-                  <span>הודעה בתוך האפליקציה</span>
-                </label>
-                <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",color:colors.textPrimary}}>
-                  <input type="checkbox" checked={reminderForm.notifications.email} onChange={e=>setReminderForm(f=>({...f,notifications:{...f.notifications,email:e.target.checked}}))} style={{cursor:"pointer"}}/>
-                  <span>הודעה למייל</span>
-                </label>
-                <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",color:colors.textPrimary}}>
-                  <input type="checkbox" checked={reminderForm.notifications.googleCalendar} onChange={e=>setReminderForm(f=>({...f,notifications:{...f.notifications,googleCalendar:e.target.checked}}))} style={{cursor:"pointer"}}/>
-                  <span>Google Calendar</span>
-                </label>
+              <div style={{fontSize:12,fontWeight:600,marginBottom:10,color:colors.textSecondary}}>אפשרויות הודעה:</div>
+              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:12}}>
+                <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"rgba(255,255,255,0.04)",borderRadius:12,border:`1px solid ${colors.border}`,cursor:"pointer"}} onClick={()=>setReminderForm(f=>({...f,notifications:{...f.notifications,inApp:!f.notifications.inApp}}))}>
+                  <div style={{width:20,height:20,borderRadius:6,background:reminderForm.notifications.inApp?colors.primary:"transparent",border:`2px solid ${reminderForm.notifications.inApp?colors.primary:colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    {reminderForm.notifications.inApp&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
+                  </div>
+                  <span style={{fontSize:13,color:colors.textPrimary}}>הודעה בתוך האפליקציה</span>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"rgba(255,255,255,0.04)",borderRadius:12,border:`1px solid ${colors.border}`,cursor:"pointer"}} onClick={()=>setReminderForm(f=>({...f,notifications:{...f.notifications,email:!f.notifications.email}}))}>
+                  <div style={{width:20,height:20,borderRadius:6,background:reminderForm.notifications.email?colors.primary:"transparent",border:`2px solid ${reminderForm.notifications.email?colors.primary:colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    {reminderForm.notifications.email&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
+                  </div>
+                  <span style={{fontSize:13,color:colors.textPrimary}}>הודעה למייל</span>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"rgba(255,255,255,0.04)",borderRadius:12,border:`1px solid ${colors.border}`,cursor:"pointer"}} onClick={()=>setReminderForm(f=>({...f,notifications:{...f.notifications,googleCalendar:!f.notifications.googleCalendar}}))}>
+                  <div style={{width:20,height:20,borderRadius:6,background:reminderForm.notifications.googleCalendar?colors.primary:"transparent",border:`2px solid ${reminderForm.notifications.googleCalendar?colors.primary:colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    {reminderForm.notifications.googleCalendar&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
+                  </div>
+                  <span style={{fontSize:13,color:colors.textPrimary}}>Google Calendar</span>
+                </div>
               </div>
 
               <div style={{display:"flex",gap:8}}>
