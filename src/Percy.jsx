@@ -243,6 +243,7 @@ export default function Percy({ session }) {
       if (editingId) {
         await updateVoucher(editingId, data, photoFile);
       } else {
+        if(form.barcode){const dup=vouchers.find(v=>v.barcode&&v.barcode===form.barcode);if(dup){setDuplicateVoucher(dup);setSaving(false);return;}}
         await addVoucher(data, photoFile);
       }
       setForm(EMPTY_FORM); setEditingId(null); setScanState("idle"); setScanImage(null); setPhotoFile(null); setView("home");
@@ -299,7 +300,7 @@ export default function Percy({ session }) {
         // check for duplicate barcode
         if(next.barcode) {
           const dup = vouchers.find(v => v.barcode && v.barcode === next.barcode);
-          if(dup) { setDuplicateVoucher(dup); setScanState("idle"); setScanImage(null); setPhotoFile(null); return; }
+          if(dup) { setDuplicateVoucher(dup); setScanState("idle"); setScanImage(null); setPhotoFile(null); setForm(EMPTY_FORM); return; }
         }
         setForm(next); setScanFields(filled); setScanState("preview");
       } catch(err) { setScanError("Couldn't read the voucher. Try a clearer photo or fill in manually."); setScanState("error"); }
@@ -796,75 +797,90 @@ export default function Percy({ session }) {
 
         {/* Purchase Reminders */}
         <div style={{marginTop:24,borderTop:`1px solid ${colors.border}`,paddingTop:16}}>
+          {/* Header */}
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-            <div><div style={{fontSize:14,fontWeight:700,marginBottom:2}}>תזכורות רכישה</div><div style={{fontSize:11,color:colors.textMuted}}>הפעל התראות לרכישות קבועות</div></div>
-            <button onClick={()=>setShowReminderForm(!showReminderForm)} style={{fontSize:12,color:colors.primary,background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontWeight:600}}>+ הוסף</button>
+            <div>
+              <div style={{fontSize:14,fontWeight:700,marginBottom:2}}>תזכורות רכישה</div>
+              <div style={{fontSize:11,color:colors.textMuted}}>תזכורות לרכישת שוברים קבועים</div>
+            </div>
+            <button onClick={()=>{setShowReminderForm(true);setReminderForm({voucherName:"",reminderDate:"",frequency:"monthly",notifications:{inApp:true}});}}
+              style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:colors.primary,background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`,borderRadius:10,padding:"7px 14px",cursor:"pointer",fontWeight:700,fontFamily:"inherit"}}>
+              + הוסף
+            </button>
           </div>
 
+          {/* Add form */}
           {showReminderForm&&(
-            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"18px",marginBottom:16,border:`1px solid ${colors.border}`}}>
-              <div style={{marginBottom:14}}>
-                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>שם השובר</label>
-                <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14}} placeholder="Netflix, Spotify..." value={reminderForm.voucherName} onChange={e=>setReminderForm(f=>({...f,voucherName:e.target.value}))}/>
-              </div>
+            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"16px",marginBottom:16,border:`1px solid ${colors.primaryBorder}`}}>
+              <div style={{fontSize:13,fontWeight:700,color:colors.primary,marginBottom:14}}>תזכורת חדשה</div>
 
-              <div style={{marginBottom:14}}>
-                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>תדירות</label>
-                <select style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14}} value={reminderForm.frequency} onChange={e=>setReminderForm(f=>({...f,frequency:e.target.value}))}>
-                  <option value="monthly">כל חודש</option>
-                  <option value="yearly">כל שנה</option>
-                  <option value="weekly">כל שבוע</option>
-                </select>
-              </div>
+              <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:14,marginBottom:10}} placeholder="שם השובר (למשל: קרפור, תן ביס)" value={reminderForm.voucherName} onChange={e=>setReminderForm(f=>({...f,voucherName:e.target.value}))}/>
 
-              <div style={{marginBottom:14}}>
-                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>בתאריך</label>
-                <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:13,padding:"12px 10px",WebkitAppearance:"none",appearance:"none",minWidth:0,overflow:"hidden",maxWidth:"100%"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
-              </div>
-
-              <div style={{marginBottom:16}}>
-                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:10,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>הודעות</label>
-                <div style={{display:"flex",alignItems:"center",gap:10,padding:"12px",background:"rgba(52,211,153,0.08)",borderRadius:12,border:`1px solid rgba(52,211,153,0.2)`}}>
-                  <div style={{width:20,height:20,borderRadius:6,background:colors.primary,border:`2px solid ${colors.primary}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    <span style={{fontSize:12,color:"#fff"}}>✓</span>
-                  </div>
-                  <span style={{fontSize:13,color:colors.textPrimary,fontWeight:500}}>הודעה בתוך האפליקציה</span>
+              <div style={{display:"flex",gap:8,marginBottom:14}}>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:10,fontWeight:600,color:colors.textMuted,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.05em"}}>תאריך</div>
+                  <input style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:13,padding:"10px",WebkitAppearance:"none",appearance:"none",overflow:"hidden"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
                 </div>
-                <button onClick={()=>{
-                  if(reminderForm.voucherName&&reminderForm.reminderDate){
-                    addToGoogleCalendar({
-                      title:`🛍 תזכורת רכישה: ${reminderForm.voucherName}`,
-                      date:reminderForm.reminderDate,
-                      description:`תזכורת לרכישת שובר ${reminderForm.voucherName}\nתדירות: ${reminderForm.frequency==="monthly"?"כל חודש":reminderForm.frequency==="yearly"?"כל שנה":"כל שבוע"}`,
-                    });
-                  }
-                }} style={{width:"100%",fontSize:12,fontWeight:600,padding:"10px",borderRadius:10,background:"rgba(66,133,244,0.12)",border:"1px solid rgba(66,133,244,0.3)",color:"#7BAAF7",cursor:"pointer",fontFamily:"inherit",marginTop:8,textAlign:"center"}}>
-                  📅 הוסף ל-Google Calendar
-                </button>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:10,fontWeight:600,color:colors.textMuted,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.05em"}}>תדירות</div>
+                  <select style={{...S.formInput,width:"100%",boxSizing:"border-box",fontSize:13,padding:"10px"}} value={reminderForm.frequency} onChange={e=>setReminderForm(f=>({...f,frequency:e.target.value}))}>
+                    <option value="weekly">שבועי</option>
+                    <option value="monthly">חודשי</option>
+                    <option value="yearly">שנתי</option>
+                  </select>
+                </div>
               </div>
 
-              <div style={{display:"flex",gap:8,marginTop:8}}>
-                <button onClick={()=>{if(reminderForm.voucherName&&reminderForm.reminderDate){setPurchaseReminders([...purchaseReminders,{...reminderForm,id:Date.now()}]);setReminderForm({voucherName:"",reminderDate:"",frequency:"monthly",notifications:{inApp:true,email:false,googleCalendar:false}});setShowReminderForm(false);}}} style={{flex:1,...S.actionBtn("primary"),fontSize:13}}>שמור תזכורת</button>
-                <button onClick={()=>setShowReminderForm(false)} style={{flex:1,...S.actionBtn("primary"),background:colors.fill1,color:colors.textPrimary,fontSize:13}}>ביטול</button>
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={()=>{
+                  if(!reminderForm.voucherName||!reminderForm.reminderDate) return;
+                  const saved={...reminderForm,id:Date.now()};
+                  setPurchaseReminders(prev=>[...prev,saved]);
+                  setShowReminderForm(false);
+                  // prompt to add to Google Calendar
+                  setTimeout(()=>{
+                    if(window.confirm("להוסיף גם ל-Google Calendar?")){
+                      addToGoogleCalendar({title:`🛍 תזכורת רכישה: ${saved.voucherName}`,date:saved.reminderDate,description:`תדירות: ${saved.frequency==="monthly"?"חודשי":saved.frequency==="yearly"?"שנתי":"שבועי"}`});
+                    }
+                  },200);
+                }} style={{flex:2,padding:"11px",borderRadius:12,border:"none",background:gradients.primary,color:colors.bg,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>שמור</button>
+                <button onClick={()=>setShowReminderForm(false)} style={{flex:1,padding:"11px",borderRadius:12,border:`1px solid ${colors.border}`,background:"transparent",color:colors.textSecondary,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>ביטול</button>
               </div>
             </div>
           )}
 
+          {/* Reminders list */}
+          {purchaseReminders.length===0&&!showReminderForm&&(
+            <div style={{textAlign:"center",padding:"24px 0",color:colors.textMuted,fontSize:13}}>
+              <div style={{fontSize:28,marginBottom:8}}>🛍</div>
+              אין תזכורות עדיין · לחץ "+ הוסף" להתחלה
+            </div>
+          )}
+
           {purchaseReminders.length>0&&(
-            <div>
-              <div style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.05em"}}>תזכורות פעילות</div>
-              {purchaseReminders.map(r=>(
-                <div key={r.id} style={{padding:"14px",background:"rgba(52,211,153,0.08)",borderRadius:14,marginBottom:10,border:"1px solid rgba(52,211,153,0.2)"}}>
-                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                    <div>
-                      <div style={{fontSize:14,fontWeight:600,color:colors.textPrimary,marginBottom:3}}>{r.voucherName}</div>
-                      <div style={{fontSize:12,color:colors.textSecondary}}>{r.reminderDate} • {r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":"כל שבוע"}</div>
-                    </div>
-                    <button onClick={()=>setPurchaseReminders(purchaseReminders.filter(x=>x.id!==r.id))} style={{fontSize:12,color:colors.danger,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>מחק</button>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {purchaseReminders.map((r,i)=>(
+                <div key={r.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",background:"rgba(255,255,255,0.04)",borderRadius:14,border:`1px solid ${colors.border}`}}>
+                  {/* Color index dot */}
+                  <div style={{width:36,height:36,borderRadius:10,background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>
+                    🛍
                   </div>
-                  <button onClick={()=>addToGoogleCalendar({title:`🛍 תזכורת רכישה: ${r.voucherName}`,date:r.reminderDate,description:`תזכורת לרכישת שובר ${r.voucherName}\nתדירות: ${r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":"כל שבוע"}`})} style={{width:"100%",fontSize:11,fontWeight:600,padding:"7px",borderRadius:8,background:"rgba(66,133,244,0.12)",border:"1px solid rgba(66,133,244,0.3)",color:"#7BAAF7",cursor:"pointer",fontFamily:"inherit",textAlign:"center"}}>
-                    📅 הוסף ל-Google Calendar
-                  </button>
+                  {/* Info */}
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:13,fontWeight:700,color:colors.textPrimary,marginBottom:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.voucherName}</div>
+                    <div style={{fontSize:11,color:colors.textMuted}}>{r.reminderDate} · {r.frequency==="monthly"?"חודשי":r.frequency==="yearly"?"שנתי":"שבועי"}</div>
+                  </div>
+                  {/* Actions */}
+                  <div style={{display:"flex",gap:6,flexShrink:0}}>
+                    <button onClick={()=>addToGoogleCalendar({title:`🛍 תזכורת רכישה: ${r.voucherName}`,date:r.reminderDate,description:`תדירות: ${r.frequency==="monthly"?"חודשי":r.frequency==="yearly"?"שנתי":"שבועי"}`})}
+                      style={{width:32,height:32,borderRadius:9,background:"rgba(66,133,244,0.12)",border:"1px solid rgba(66,133,244,0.3)",color:"#7BAAF7",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}} title="הוסף ל-Google Calendar">
+                      📅
+                    </button>
+                    <button onClick={()=>setPurchaseReminders(prev=>prev.filter(x=>x.id!==r.id))}
+                      style={{width:32,height:32,borderRadius:9,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:colors.danger,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}} title="מחק">
+                      ✕
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
