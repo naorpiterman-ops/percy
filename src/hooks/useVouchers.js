@@ -83,6 +83,8 @@ export function useVouchers() {
           .getPublicUrl(path);
         photoUrl = urlData?.publicUrl || null;
       }
+      // fallback: store base64 directly if storage upload failed
+      if (!photoUrl && formData.photo) photoUrl = formData.photo;
     }
 
     const row = voucherToRow(formData, user.id);
@@ -115,6 +117,8 @@ export function useVouchers() {
           .getPublicUrl(path);
         photoUrl = urlData?.publicUrl || null;
       }
+      // fallback: store base64 directly if storage upload failed
+      if (!photoUrl && formData.photo) photoUrl = formData.photo;
     }
 
     const row = voucherToRow(formData);
