@@ -666,61 +666,58 @@ export default function Percy({ session }) {
 
         {/* Purchase Reminders */}
         <div style={{marginTop:24,borderTop:`1px solid ${colors.border}`,paddingTop:16}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-            <div style={{fontSize:14,fontWeight:700}}>🔔 תזכורות רכישה</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+            <div><div style={{fontSize:14,fontWeight:700,marginBottom:2}}>תזכורות רכישה</div><div style={{fontSize:11,color:colors.textMuted}}>הפעל התראות לרכישות קבועות</div></div>
             <button onClick={()=>setShowReminderForm(!showReminderForm)} style={{fontSize:12,color:colors.primary,background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`,borderRadius:8,padding:"6px 12px",cursor:"pointer",fontWeight:600}}>+ הוסף</button>
           </div>
 
           {showReminderForm&&(
-            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:12,padding:"16px",marginBottom:16,border:`1px solid ${colors.border}`}}>
-              <input style={{...S.formInput,marginBottom:12}} placeholder="שם השובר (למשל: Netflix)" value={reminderForm.voucherName} onChange={e=>setReminderForm(f=>({...f,voucherName:e.target.value}))}/>
-              <select style={{...S.formInput,marginBottom:12}} value={reminderForm.frequency} onChange={e=>setReminderForm(f=>({...f,frequency:e.target.value}))}>
-                <option value="monthly">כל חודש</option>
-                <option value="yearly">כל שנה</option>
-                <option value="weekly">כל שבוע</option>
-                <option value="custom">בתאריך ספציפי</option>
-              </select>
-              <div style={{marginBottom:12}}>
-                <label style={{fontSize:12,fontWeight:600,color:colors.textSecondary,marginBottom:6,display:"block"}}>בחר תאריך</label>
-                <input style={{...S.formInput,width:"100%",boxSizing:"border-box"}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
+            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"18px",marginBottom:16,border:`1px solid ${colors.border}`}}>
+              <div style={{marginBottom:14}}>
+                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>שם השובר</label>
+                <input style={{...S.formInput}} placeholder="Netflix, Spotify, etc." value={reminderForm.voucherName} onChange={e=>setReminderForm(f=>({...f,voucherName:e.target.value}))}/>
               </div>
 
-              <div style={{fontSize:12,fontWeight:600,marginBottom:10,color:colors.textSecondary}}>אפשרויות הודעה:</div>
-              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:12}}>
-                <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"rgba(255,255,255,0.04)",borderRadius:12,border:`1px solid ${colors.border}`,cursor:"pointer"}} onClick={()=>setReminderForm(f=>({...f,notifications:{...f.notifications,inApp:!f.notifications.inApp}}))}>
-                  <div style={{width:20,height:20,borderRadius:6,background:reminderForm.notifications.inApp?colors.primary:"transparent",border:`2px solid ${reminderForm.notifications.inApp?colors.primary:colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    {reminderForm.notifications.inApp&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
+              <div style={{marginBottom:14}}>
+                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>תדירות</label>
+                <select style={{...S.formInput}} value={reminderForm.frequency} onChange={e=>setReminderForm(f=>({...f,frequency:e.target.value}))}>
+                  <option value="monthly">כל חודש</option>
+                  <option value="yearly">כל שנה</option>
+                  <option value="weekly">כל שבוע</option>
+                </select>
+              </div>
+
+              <div style={{marginBottom:14}}>
+                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:8,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>בתאריך</label>
+                <input style={{...S.formInput}} type="date" value={reminderForm.reminderDate} onChange={e=>setReminderForm(f=>({...f,reminderDate:e.target.value}))}/>
+              </div>
+
+              <div style={{marginBottom:16}}>
+                <label style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:10,display:"block",textTransform:"uppercase",letterSpacing:"0.05em"}}>הודעות</label>
+                <div style={{display:"flex",alignItems:"center",gap:10,padding:"12px",background:"rgba(52,211,153,0.08)",borderRadius:12,border:`1px solid rgba(52,211,153,0.2)`}}>
+                  <div style={{width:20,height:20,borderRadius:6,background:colors.primary,border:`2px solid ${colors.primary}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <span style={{fontSize:12,color:"#fff"}}>✓</span>
                   </div>
-                  <span style={{fontSize:13,color:colors.textPrimary}}>הודעה בתוך האפליקציה</span>
+                  <span style={{fontSize:13,color:colors.textPrimary,fontWeight:500}}>הודעה בתוך האפליקציה</span>
                 </div>
-                <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"rgba(255,255,255,0.04)",borderRadius:12,border:`1px solid ${colors.border}`,cursor:"pointer"}} onClick={()=>setReminderForm(f=>({...f,notifications:{...f.notifications,email:!f.notifications.email}}))}>
-                  <div style={{width:20,height:20,borderRadius:6,background:reminderForm.notifications.email?colors.primary:"transparent",border:`2px solid ${reminderForm.notifications.email?colors.primary:colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    {reminderForm.notifications.email&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
-                  </div>
-                  <span style={{fontSize:13,color:colors.textPrimary}}>הודעה למייל</span>
-                </div>
-                <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"rgba(255,255,255,0.04)",borderRadius:12,border:`1px solid ${colors.border}`,cursor:"pointer"}} onClick={()=>setReminderForm(f=>({...f,notifications:{...f.notifications,googleCalendar:!f.notifications.googleCalendar}}))}>
-                  <div style={{width:20,height:20,borderRadius:6,background:reminderForm.notifications.googleCalendar?colors.primary:"transparent",border:`2px solid ${reminderForm.notifications.googleCalendar?colors.primary:colors.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    {reminderForm.notifications.googleCalendar&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
-                  </div>
-                  <span style={{fontSize:13,color:colors.textPrimary}}>Google Calendar</span>
-                </div>
+                <div style={{fontSize:11,color:colors.textMuted,marginTop:8}}>Google Calendar ודוא"ל יתווספו בקרוב</div>
               </div>
 
               <div style={{display:"flex",gap:8}}>
-                <button onClick={()=>{if(reminderForm.voucherName&&reminderForm.reminderDate){setPurchaseReminders([...purchaseReminders,{...reminderForm,id:Date.now()}]);setReminderForm({voucherName:"",reminderDate:"",frequency:"monthly",notifications:{inApp:true,email:false,googleCalendar:false}});setShowReminderForm(false);}}} style={{flex:1,...S.actionBtn("primary"),fontSize:12}}>שמור תזכורת</button>
-                <button onClick={()=>setShowReminderForm(false)} style={{flex:1,...S.actionBtn("primary"),background:colors.fill1,color:colors.textPrimary,fontSize:12}}>ביטול</button>
+                <button onClick={()=>{if(reminderForm.voucherName&&reminderForm.reminderDate){setPurchaseReminders([...purchaseReminders,{...reminderForm,id:Date.now()}]);setReminderForm({voucherName:"",reminderDate:"",frequency:"monthly",notifications:{inApp:true,email:false,googleCalendar:false}});setShowReminderForm(false);}}} style={{flex:1,...S.actionBtn("primary"),fontSize:13}}>שמור תזכורת</button>
+                <button onClick={()=>setShowReminderForm(false)} style={{flex:1,...S.actionBtn("primary"),background:colors.fill1,color:colors.textPrimary,fontSize:13}}>ביטול</button>
               </div>
             </div>
           )}
 
           {purchaseReminders.length>0&&(
             <div>
+              <div style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.05em"}}>תזכורות פעילות</div>
               {purchaseReminders.map(r=>(
-                <div key={r.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 14px",background:"rgba(52,211,153,0.08)",borderRadius:12,marginBottom:8,border:"1px solid rgba(52,211,153,0.2)"}}>
+                <div key={r.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px",background:"rgba(52,211,153,0.08)",borderRadius:14,marginBottom:10,border:"1px solid rgba(52,211,153,0.2)"}}>
                   <div>
-                    <div style={{fontSize:13,fontWeight:600,color:colors.textPrimary}}>{r.voucherName}</div>
-                    <div style={{fontSize:11,color:colors.textSecondary}}>{r.reminderDate} · {r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":r.frequency==="weekly"?"כל שבוע":"בתאריך ספציפי"}</div>
+                    <div style={{fontSize:14,fontWeight:600,color:colors.textPrimary,marginBottom:3}}>{r.voucherName}</div>
+                    <div style={{fontSize:12,color:colors.textSecondary}}>{r.reminderDate} • {r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":"כל שבוע"}</div>
                   </div>
                   <button onClick={()=>setPurchaseReminders(purchaseReminders.filter(x=>x.id!==r.id))} style={{fontSize:12,color:colors.danger,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>מחק</button>
                 </div>
