@@ -82,6 +82,22 @@ const CATEGORY_KEYWORDS = [
   { category:"נסיעות",    keywords:["טיסה","מלון","נסיעה","רכב","אוטובוס","רכבת","airbnb","booking","el al","israir","אל על","תחבורה","taxi","uber"] },
 ];
 
+const CATEGORY_EN_TO_HE = {
+  "supermarket":"סופרמרקט","restaurants":"מסעדות","restaurant":"מסעדות",
+  "clothing":"ביגוד","fashion":"ביגוד","books":"ספרים","pharmacy":"בית מרקחת",
+  "entertainment":"בידור","travel":"נסיעות","other":"אחר","food":"מסעדות",
+  "health":"בית מרקחת","home":"אחר","kids":"אחר","fuel":"אחר","generalretail":"אחר",
+};
+
+function normalizeCategoryFromAI(cat) {
+  if (!cat) return null;
+  const he = CATEGORY_EN_TO_HE[cat.toLowerCase()];
+  if (he) return he;
+  // if already Hebrew category, return as-is
+  if (Object.values(CATEGORY_COLORS).length && cat in CATEGORY_COLORS) return cat;
+  return null;
+}
+
 function guessCategoryFromStore(storeName) {
   if (!storeName) return null;
   const lower = storeName.toLowerCase();
@@ -250,7 +266,7 @@ export default function Percy({ session }) {
         if(extracted.expiredBy){ next.expiredBy=extracted.expiredBy;                                              filled.push("expiredBy"); }
         if(extracted.notes)    { next.notes=extracted.notes;                                                      filled.push("notes"); }
         // auto-detect category from AI result or store name keywords
-        const detectedCat = extracted.category || guessCategoryFromStore(extracted.store);
+        const detectedCat = normalizeCategoryFromAI(extracted.category) || guessCategoryFromStore(extracted.store);
         if(detectedCat){ next.category=detectedCat; filled.push("category"); }
         // auto-assign color from category
         const catColor = CATEGORY_COLORS[next.category];
