@@ -95,12 +95,15 @@ export default function Percy({ session }) {
   const [scanImage,         setScanImage]         = useState(null);
   const [scanError,         setScanError]         = useState("");
   const [scanFields,        setScanFields]        = useState([]);
-  const [notifEmail,        setNotifEmail]        = useState("");
+  const [notifEmail,        setNotifEmail]        = useState(session?.user?.email || "");
   const [browserPermission, setBrowserPermission] = useState("Notification" in window ? Notification.permission : "denied");
   const [inAppAlerts,       setInAppAlerts]       = useState([]);
   const [notifSent,         setNotifSent]         = useState({});
   const [showNotifSetup,    setShowNotifSetup]    = useState(false);
+  const [showSettings,      setShowSettings]      = useState(false);
   const [notifToast,        setNotifToast]        = useState(null);
+  const [newPassword,       setNewPassword]       = useState("");
+  const [pwMsg,             setPwMsg]             = useState("");
   const [lightboxPhoto,     setLightboxPhoto]     = useState(null);
   const [swipedId,          setSwipedId]          = useState(null);
   const [customCategory,    setCustomCategory]    = useState("");
@@ -643,16 +646,10 @@ export default function Percy({ session }) {
           <div><div style={{fontSize:20,fontWeight:800,marginBottom:4}}>🔔 הגדרות תזכורות</div><div style={{fontSize:13,color:colors.textMuted}}>קבל התראה 30 יום לפני התפוגה</div></div>
           <button style={{...S.backBtn,fontSize:16}} onClick={()=>setShowNotifSetup(false)}>✕</button>
         </div>
-        <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"16px",marginBottom:12,border:`1px solid ${colors.border}`}}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:18}}>📱</span><div style={{flex:1}}><div style={{fontSize:14,fontWeight:700}}>התראות בתוך האפליקציה</div><div style={{fontSize:12,color:colors.textMuted}}>רצועות מוצגות כשאתה פותח את האפליקציה</div></div><div style={{padding:"4px 12px",borderRadius:50,background:colors.activeBg,color:colors.active,fontSize:11,fontWeight:600}}>פעיל</div></div>
-        </div>
-        <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"16px",marginBottom:12,border:`1px solid ${colors.border}`}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}><span style={{fontSize:18}}>🖥</span><div><div style={{fontSize:14,fontWeight:700}}>התראות דפדפן</div><div style={{fontSize:12,color:colors.textMuted}}>התראות פוש של שולחן עבודה</div></div></div>
-          {browserPermission==="granted"?<div style={{display:"flex",gap:8}}><div style={{padding:"4px 12px",borderRadius:50,background:colors.activeBg,color:colors.active,fontSize:11,fontWeight:600}}>✓ מופעל</div><button onClick={()=>{const v=vouchers.find(x=>x.status!=="used"&&isExpiringSoon(x.expiredBy));if(v)sendBrowserNotification(v);}} style={{fontSize:11,color:colors.primary,background:colors.primaryGlow,border:`1px solid ${colors.primaryBorder}`,borderRadius:8,padding:"4px 12px",cursor:"pointer"}}>שלח בדיקה</button></div>:browserPermission==="denied"?<div style={{fontSize:12,color:colors.danger}}>חסום בהגדרות הדפדפן.</div>:<button onClick={requestBrowserPermission} style={{...S.actionBtn("primary"),flex:"none",padding:"10px 20px",fontSize:13}}>אפשר התראות דפדפן</button>}
-        </div>
         <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"16px",marginBottom:16,border:`1px solid ${colors.border}`}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}><span style={{fontSize:18}}>📧</span><div><div style={{fontSize:14,fontWeight:700}}>תזכורות דוא״ל</div><div style={{fontSize:12,color:colors.textMuted}}>דוא״ל תפוגה של 30 יום</div></div></div>
-          <input style={{...S.formInput,marginBottom:10}} type="email" placeholder="your@email.com" value={notifEmail} onChange={e=>setNotifEmail(e.target.value)}/>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}><span style={{fontSize:18}}>📧</span><div><div style={{fontSize:14,fontWeight:700}}>תזכורות דוא״ל</div><div style={{fontSize:12,color:colors.textMuted}}>אקבל דוא״ל 30 יום לפני תפוגת שובר</div></div></div>
+          <input style={{...S.formInput,width:"100%",boxSizing:"border-box",marginBottom:10}} type="email" placeholder="your@email.com" value={notifEmail} onChange={e=>setNotifEmail(e.target.value)}/>
+          {notifEmail===session?.user?.email&&<div style={{fontSize:11,color:colors.textMuted}}>המייל שנכנסת איתו לאפליקציה</div>}
         </div>
         {inAppAlerts.length>0&&<div>
           <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>פוגים תוך 30 יום:</div>
@@ -726,9 +723,33 @@ export default function Percy({ session }) {
           )}
         </div>
 
+        <button style={{...S.saveBtn,width:"100%",boxSizing:"border-box",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center",marginTop:8}} onClick={()=>setShowNotifSetup(false)}>בוצע</button>
+      </div>
+    </div>
+  );
+
+  // ── SETTINGS MODAL ──────────────────────────────────────────
+  const renderSettings = () => (
+    <div style={S.overlay} onClick={()=>setShowSettings(false)}>
+      <div style={{...S.sheet,maxHeight:"70vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
+          <div><div style={{fontSize:20,fontWeight:800,marginBottom:4}}>⚙️ הגדרות</div></div>
+          <button style={{...S.backBtn,fontSize:16}} onClick={()=>setShowSettings(false)}>✕</button>
+        </div>
+        {/* User info */}
+        <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"16px",marginBottom:12,border:`1px solid ${colors.border}`}}>
+          <div style={{fontSize:11,fontWeight:600,color:colors.textMuted,marginBottom:4,textTransform:"uppercase",letterSpacing:"0.05em"}}>משתמש</div>
+          <div style={{fontSize:15,fontWeight:700,color:colors.textPrimary}}>{user?.email}</div>
+        </div>
+        {/* Change password */}
+        <div style={{background:"rgba(255,255,255,0.04)",borderRadius:16,padding:"16px",marginBottom:12,border:`1px solid ${colors.border}`}}>
+          <div style={{fontSize:14,fontWeight:700,marginBottom:12}}>החלף סיסמא</div>
+          <input style={{...S.formInput,width:"100%",boxSizing:"border-box",marginBottom:10}} type="password" placeholder="סיסמא חדשה" value={newPassword} onChange={e=>setNewPassword(e.target.value)}/>
+          <button onClick={async()=>{if(newPassword.length<6){setPwMsg("סיסמא חייבת להיות לפחות 6 תווים");return;}const{error}=await supabase.auth.updateUser({password:newPassword});if(error){setPwMsg("שגיאה: "+error.message);}else{setPwMsg("✓ הסיסמא עודכנה בהצלחה");setNewPassword("");}}} style={{...S.actionBtn("primary"),width:"100%",boxSizing:"border-box",fontSize:13,justifyContent:"center"}}>עדכן סיסמא</button>
+          {pwMsg&&<div style={{fontSize:12,color:pwMsg.startsWith("✓")?colors.active:colors.danger,marginTop:8}}>{pwMsg}</div>}
+        </div>
         {/* Sign out */}
-        <button onClick={()=>supabase.auth.signOut()} style={{width:"100%",padding:"12px",borderRadius:14,border:`1px solid ${colors.border}`,background:"transparent",color:colors.danger,fontSize:14,fontWeight:600,cursor:"pointer",marginBottom:8,fontFamily:"inherit"}}>התנתק</button>
-        <button style={{...S.saveBtn,margin:"8px 0 0",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNotifSetup(false)}>בוצע</button>
+        <button onClick={()=>supabase.auth.signOut()} style={{width:"100%",padding:"14px",borderRadius:14,border:`1px solid rgba(239,68,68,0.3)`,background:"rgba(239,68,68,0.08)",color:colors.danger,fontSize:14,fontWeight:600,cursor:"pointer",marginBottom:8,fontFamily:"inherit",boxSizing:"border-box"}}>התנתק</button>
       </div>
     </div>
   );
@@ -742,7 +763,7 @@ export default function Percy({ session }) {
           <button onClick={()=>setShowNotifSetup(true)} style={{position:"relative",width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:18}}>
             🔔{inAppAlerts.length>0&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:colors.warning,border:"2px solid #0A0A0F"}}/>}
           </button>
-          <button onClick={()=>setShowNotifSetup(true)} style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:18}}>
+          <button onClick={()=>setShowSettings(true)} style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,0.06)",border:`1px solid ${colors.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:18}}>
             ⚙️
           </button>
         </div>
@@ -796,6 +817,7 @@ export default function Percy({ session }) {
       </div>
       <button onClick={()=>{setForm(EMPTY_FORM);setEditingId(null);setScanState("idle");setScanImage(null);setPhotoFile(null);setView("add");}} style={{position:"fixed",bottom:32,right:24,width:60,height:60,borderRadius:16,background:colors.primary,border:"none",color:"#fff",fontSize:32,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px ${colors.shadowGlow}`,zIndex:99}}>+</button>
       {showNotifSetup&&renderNotifSetup()}
+      {showSettings&&renderSettings()}
     </div>
   );
 
