@@ -131,6 +131,8 @@ export default function Percy({ session }) {
   const [notifSent,         setNotifSent]         = useState({});
   const [showNotifSetup,    setShowNotifSetup]    = useState(false);
   const [showSettings,      setShowSettings]      = useState(false);
+  const [showPartialUse,    setShowPartialUse]    = useState(false);
+  const [partialAmount,     setPartialAmount]     = useState("");
   const [notifToast,        setNotifToast]        = useState(null);
   const [newPassword,       setNewPassword]       = useState("");
   const [pwMsg,             setPwMsg]             = useState("");
@@ -507,9 +509,46 @@ export default function Percy({ session }) {
 
           <div style={{display:"flex",gap:10,padding:"16px 24px 0"}}>
             {v.status!=="used"&&<button style={S.actionBtn("primary")} onClick={()=>{markUsed(v.id);setView("home");}}>✓ סמן כנוצל</button>}
+            {v.status!=="used"&&<button style={S.actionBtn("secondary")} onClick={()=>{setShowPartialUse(p=>!p);setPartialAmount("");}}>⚡ מימוש חלקי</button>}
             <button style={S.actionBtn("secondary")} onClick={()=>handleEdit(v)}>ערוך</button>
             <button style={S.actionBtn("danger")} onClick={()=>setShowDeleteConfirm(true)}>מחק</button>
           </div>
+
+          {showPartialUse&&v.status!=="used"&&(
+            <div style={{margin:"12px 24px 0",background:"rgba(255,255,255,0.04)",border:`1px solid ${colors.border}`,borderRadius:16,padding:"16px"}}>
+              <div style={{fontSize:13,fontWeight:600,color:colors.textSecondary,marginBottom:10}}>כמה מימשת?</div>
+              <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                <div style={{position:"relative",flex:1}}>
+                  <span style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",fontSize:15,color:colors.textMuted,pointerEvents:"none"}}>₪</span>
+                  <input
+                    type="number" inputMode="decimal" placeholder="0"
+                    value={partialAmount}
+                    onChange={e=>setPartialAmount(e.target.value)}
+                    style={{...S.formInput,width:"100%",boxSizing:"border-box",paddingRight:28,fontSize:15}}
+                    autoFocus
+                  />
+                </div>
+                <button
+                  style={{...S.actionBtn("primary"),flexShrink:0,padding:"11px 18px"}}
+                  onClick={async()=>{
+                    const used=parseFloat(partialAmount);
+                    if(!used||used<=0)return;
+                    const newRemaining=Math.max(0,(parseFloat(v.remaining)||parseFloat(v.amount)||0)-used);
+                    const newStatus=newRemaining<=0?"used":"partial";
+                    await updateVoucher(v.id,{...v,remaining:String(newRemaining),status:newStatus});
+                    setShowPartialUse(false);setPartialAmount("");
+                    if(newStatus==="used")setView("home");
+                  }}
+                >אשר</button>
+              </div>
+              {partialAmount&&(
+                <div style={{fontSize:12,color:colors.textMuted,marginTop:8}}>
+                  יישאר: {v.currency}{Math.max(0,(parseFloat(v.remaining)||parseFloat(v.amount)||0)-parseFloat(partialAmount||0)).toFixed(2)}
+                </div>
+              )}
+            </div>
+          )}
+
           <div style={{height:40}}/>
         </div>
 
