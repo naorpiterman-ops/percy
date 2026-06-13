@@ -61,6 +61,36 @@ const CATEGORIES     = ["הכל","סופרמרקט","מסעדות","ביגוד",
 const STATUS_OPTIONS = ["active","partial","used"];
 const EMPTY_FORM     = { store:"", barcode:"", amount:"", currency:"₪", location:"", expiredBy:"", status:"active", remaining:"", category:"", color:"#10B981", notes:"", favorite:false, photo:null, photo_url:null };
 
+const CATEGORY_COLORS = {
+  "סופרמרקט":  "#22c55e",
+  "מסעדות":    "#f97316",
+  "ביגוד":     "#a78bfa",
+  "ספרים":     "#60a5fa",
+  "בית מרקחת":"#34d399",
+  "בידור":     "#f43f5e",
+  "נסיעות":    "#38bdf8",
+  "אחר":       "#94a3b8",
+};
+
+const CATEGORY_KEYWORDS = [
+  { category:"מסעדות",    keywords:["מסעדה","אוכל","פיצה","סושי","המבורגר","קפה","בית קפה","תן ביס","10bis","wolt","רולדין","בורגר","שווארמה","חומוס","סלט","גלידה","מאפה"] },
+  { category:"סופרמרקט", keywords:["סופר","מרקט","קרפור","רמי לוי","שופרסל","מגה","ויקטורי","יינות ביתן","carrefour","super","grocery","מכולת","fresh"] },
+  { category:"ביגוד",     keywords:["פיקס","fix","פוקס","fox","מנגו","mango","זארה","zara","H&M","hm","ביגוד","אופנה","נעליים","בגדים","בוטיק","golf","גולף"] },
+  { category:"ספרים",     keywords:["ספר","ספרים","צומת ספרים","סטימצקי","steimatzky","book","kindle","library"] },
+  { category:"בית מרקחת",keywords:["פארם","pharm","אופטיקה","רוקח","בית מרקחת","super-pharm","superpharm","טבע","vitamin","vitamins"] },
+  { category:"בידור",     keywords:["סרט","קולנוע","סינמה","cinema","הוט","hot","netflix","spotify","גיים","game","פארק","jump","בידור","אטרקציה","מוזיאון"] },
+  { category:"נסיעות",    keywords:["טיסה","מלון","נסיעה","רכב","אוטובוס","רכבת","airbnb","booking","el al","israir","אל על","תחבורה","taxi","uber"] },
+];
+
+function guessCategoryFromStore(storeName) {
+  if (!storeName) return null;
+  const lower = storeName.toLowerCase();
+  for (const { category, keywords } of CATEGORY_KEYWORDS) {
+    if (keywords.some(k => lower.includes(k.toLowerCase()))) return category;
+  }
+  return null;
+}
+
 function formatDate(d)      { if (!d) return "—"; return new Date(d).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 function isExpired(d)       { return d && new Date(d) < new Date(); }
 function daysLeft(d)        { return Math.ceil((new Date(d)-new Date())/86400000); }
@@ -216,9 +246,13 @@ export default function Percy({ session }) {
         if(extracted.currency) next.currency=extracted.currency;
         if(extracted.location) { next.location=extracted.location;                                                filled.push("location"); }
         if(extracted.expiredBy){ next.expiredBy=extracted.expiredBy;                                              filled.push("expiredBy"); }
-        if(extracted.category) { next.category=extracted.category;                                                filled.push("category"); }
         if(extracted.notes)    { next.notes=extracted.notes;                                                      filled.push("notes"); }
-        if(extracted.color)    next.color=extracted.color;
+        // auto-detect category from AI result or store name keywords
+        const detectedCat = extracted.category || guessCategoryFromStore(extracted.store);
+        if(detectedCat){ next.category=detectedCat; filled.push("category"); }
+        // auto-assign color from category
+        const catColor = CATEGORY_COLORS[next.category];
+        next.color = catColor || extracted.color || "#10B981";
         setForm(next); setScanFields(filled); setScanState("preview");
       } catch(err) { setScanError("Couldn't read the voucher. Try a clearer photo or fill in manually."); setScanState("error"); }
     };
@@ -568,7 +602,7 @@ export default function Percy({ session }) {
         <div style={S.formSection}>
           <label style={S.formLabel}>קטגוריה {isFilled("category")&&<span style={{color:colors.active,fontSize:10,fontWeight:700}}>✦ מולא על ידי AI</span>}</label>
           <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:8}}>
-            {CATEGORIES.filter(c=>c!=="All").map(c=><button key={c} style={S.filterChip(form.category===c)} onClick={()=>setForm(f=>({...f,category:c}))}>{c}</button>)}
+            {CATEGORIES.filter(c=>c!=="הכל").map(c=><button key={c} style={S.filterChip(form.category===c)} onClick={()=>setForm(f=>({...f,category:c,color:CATEGORY_COLORS[c]||f.color}))}>{c}</button>)}
           </div>
           <input style={S.formInput} placeholder="או הקלד קטגוריה מותאמת…" value={customCategory} onChange={e=>setCustomCategory(e.target.value)} onBlur={e=>{if(e.target.value.trim()){setForm(f=>({...f,category:e.target.value.trim()}));setCustomCategory("");}}}/>
         </div>
