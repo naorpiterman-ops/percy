@@ -728,7 +728,7 @@ export default function Percy({ session }) {
 
         {/* Sign out */}
         <button onClick={()=>supabase.auth.signOut()} style={{width:"100%",padding:"12px",borderRadius:14,border:`1px solid ${colors.border}`,background:"transparent",color:colors.danger,fontSize:14,fontWeight:600,cursor:"pointer",marginBottom:8,fontFamily:"inherit"}}>התנתק</button>
-        <button style={{...S.saveBtn,margin:"8px 0 0"}} onClick={()=>setShowNotifSetup(false)}>בוצע</button>
+        <button style={{...S.saveBtn,margin:"8px 0 0",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setShowNotifSetup(false)}>בוצע</button>
       </div>
     </div>
   );
