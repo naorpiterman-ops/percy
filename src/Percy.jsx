@@ -209,6 +209,30 @@ export default function Percy({ session }) {
 
   function handleCopyCode(code) { navigator.clipboard?.writeText(code).catch(()=>{}); setShowCopied(true); setTimeout(()=>setShowCopied(false),1800); }
 
+  function addToGoogleCalendar({ title, date, description="" }) {
+    // date = "YYYY-MM-DD"
+    const d = date.replace(/-/g,"");
+    // all-day event: end = next day
+    const end = (() => { const dt=new Date(date); dt.setDate(dt.getDate()+1); return dt.toISOString().slice(0,10).replace(/-/g,""); })();
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE`
+      + `&text=${encodeURIComponent(title)}`
+      + `&dates=${d}/${end}`
+      + `&details=${encodeURIComponent(description)}`;
+    window.open(url, "_blank");
+  }
+
+  function addExpiryToCalendar(voucher, daysBefore=30) {
+    if (!voucher.expiredBy) return;
+    const expDate = new Date(voucher.expiredBy);
+    expDate.setDate(expDate.getDate() - daysBefore);
+    const reminderDate = expDate.toISOString().slice(0,10);
+    addToGoogleCalendar({
+      title: `⏰ שובר ${voucher.store} פג תוקף בעוד ${daysBefore} יום`,
+      date: reminderDate,
+      description: `קוד שובר: ${voucher.barcode||"—"}\nיתרה: ${voucher.currency}${voucher.remaining||voucher.amount}\nתאריך תפוגה: ${voucher.expiredBy}`,
+    });
+  }
+
   async function handleSave() {
     if (saving) return;
     setSaving(true);
@@ -571,6 +595,20 @@ export default function Percy({ session }) {
             </div>
           )}
 
+          {/* Google Calendar reminders */}
+          {v.expiredBy&&v.status!=="used"&&(
+            <div style={{margin:"12px 24px 0",background:"rgba(255,255,255,0.04)",border:`1px solid ${colors.border}`,borderRadius:16,padding:"16px"}}>
+              <div style={{fontSize:12,fontWeight:600,color:colors.textSecondary,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.05em"}}>📅 תזכורות ל-Google Calendar</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                {[{label:"חודש לפני",days:30},{label:"שבוע לפני",days:7},{label:"יום לפני",days:1}].map(({label,days})=>(
+                  <button key={days} onClick={()=>addExpiryToCalendar(v,days)} style={{fontSize:12,fontWeight:600,padding:"8px 14px",borderRadius:10,background:"rgba(66,133,244,0.12)",border:"1px solid rgba(66,133,244,0.3)",color:"#7BAAF7",cursor:"pointer",fontFamily:"inherit"}}>
+                    + {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div style={{height:40}}/>
         </div>
 
@@ -792,10 +830,20 @@ export default function Percy({ session }) {
                   </div>
                   <span style={{fontSize:13,color:colors.textPrimary,fontWeight:500}}>הודעה בתוך האפליקציה</span>
                 </div>
-                <div style={{fontSize:11,color:colors.textMuted,marginTop:8}}>Google Calendar ודוא"ל יתווספו בקרוב</div>
+                <button onClick={()=>{
+                  if(reminderForm.voucherName&&reminderForm.reminderDate){
+                    addToGoogleCalendar({
+                      title:`🛍 תזכורת רכישה: ${reminderForm.voucherName}`,
+                      date:reminderForm.reminderDate,
+                      description:`תזכורת לרכישת שובר ${reminderForm.voucherName}\nתדירות: ${reminderForm.frequency==="monthly"?"כל חודש":reminderForm.frequency==="yearly"?"כל שנה":"כל שבוע"}`,
+                    });
+                  }
+                }} style={{width:"100%",fontSize:12,fontWeight:600,padding:"10px",borderRadius:10,background:"rgba(66,133,244,0.12)",border:"1px solid rgba(66,133,244,0.3)",color:"#7BAAF7",cursor:"pointer",fontFamily:"inherit",marginTop:8,textAlign:"center"}}>
+                  📅 הוסף ל-Google Calendar
+                </button>
               </div>
 
-              <div style={{display:"flex",gap:8}}>
+              <div style={{display:"flex",gap:8,marginTop:8}}>
                 <button onClick={()=>{if(reminderForm.voucherName&&reminderForm.reminderDate){setPurchaseReminders([...purchaseReminders,{...reminderForm,id:Date.now()}]);setReminderForm({voucherName:"",reminderDate:"",frequency:"monthly",notifications:{inApp:true,email:false,googleCalendar:false}});setShowReminderForm(false);}}} style={{flex:1,...S.actionBtn("primary"),fontSize:13}}>שמור תזכורת</button>
                 <button onClick={()=>setShowReminderForm(false)} style={{flex:1,...S.actionBtn("primary"),background:colors.fill1,color:colors.textPrimary,fontSize:13}}>ביטול</button>
               </div>
@@ -806,12 +854,17 @@ export default function Percy({ session }) {
             <div>
               <div style={{fontSize:11,fontWeight:600,color:colors.textSecondary,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.05em"}}>תזכורות פעילות</div>
               {purchaseReminders.map(r=>(
-                <div key={r.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px",background:"rgba(52,211,153,0.08)",borderRadius:14,marginBottom:10,border:"1px solid rgba(52,211,153,0.2)"}}>
-                  <div>
-                    <div style={{fontSize:14,fontWeight:600,color:colors.textPrimary,marginBottom:3}}>{r.voucherName}</div>
-                    <div style={{fontSize:12,color:colors.textSecondary}}>{r.reminderDate} • {r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":"כל שבוע"}</div>
+                <div key={r.id} style={{padding:"14px",background:"rgba(52,211,153,0.08)",borderRadius:14,marginBottom:10,border:"1px solid rgba(52,211,153,0.2)"}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                    <div>
+                      <div style={{fontSize:14,fontWeight:600,color:colors.textPrimary,marginBottom:3}}>{r.voucherName}</div>
+                      <div style={{fontSize:12,color:colors.textSecondary}}>{r.reminderDate} • {r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":"כל שבוע"}</div>
+                    </div>
+                    <button onClick={()=>setPurchaseReminders(purchaseReminders.filter(x=>x.id!==r.id))} style={{fontSize:12,color:colors.danger,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>מחק</button>
                   </div>
-                  <button onClick={()=>setPurchaseReminders(purchaseReminders.filter(x=>x.id!==r.id))} style={{fontSize:12,color:colors.danger,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>מחק</button>
+                  <button onClick={()=>addToGoogleCalendar({title:`🛍 תזכורת רכישה: ${r.voucherName}`,date:r.reminderDate,description:`תזכורת לרכישת שובר ${r.voucherName}\nתדירות: ${r.frequency==="monthly"?"כל חודש":r.frequency==="yearly"?"כל שנה":"כל שבוע"}`})} style={{width:"100%",fontSize:11,fontWeight:600,padding:"7px",borderRadius:8,background:"rgba(66,133,244,0.12)",border:"1px solid rgba(66,133,244,0.3)",color:"#7BAAF7",cursor:"pointer",fontFamily:"inherit",textAlign:"center"}}>
+                    📅 הוסף ל-Google Calendar
+                  </button>
                 </div>
               ))}
             </div>
